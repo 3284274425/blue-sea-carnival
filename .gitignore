@@ -1,0 +1,10 @@
+.DS_Store
+.vscode/
+.trae-html-share-packages/
+*.zip
+*.pptx
+*.pdf
+*.webp
+*.png
+!images/*.png
+__MACOSX/

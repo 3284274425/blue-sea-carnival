@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>入园导览 | 蔚海狂欢季 Blue-Sea Carnival</title>
+  <link rel="stylesheet" href="css/style.css?v=20261019f">
+  <style>
+    .page-hero {
+      background: linear-gradient(160deg, #E8F6FF, #B8E0F5);
+      padding: 140px 24px 60px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); color: var(--deep-sea); font-weight: 900; position: relative; }
+    .page-hero p { color: var(--text-muted); margin-top: 12px; position: relative; }
+
+    /* 导览地图区 */
+    .map-section { padding: 60px 0; }
+    .map-layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 28px; align-items: start; }
+    @media (max-width: 900px) { .map-layout { grid-template-columns: 1fr; } }
+
+    .map-container {
+      background: linear-gradient(180deg, #D6EAF8, #AED6F1);
+      border-radius: var(--radius-lg); padding: 24px;
+      box-shadow: var(--shadow-card); position: relative; overflow: hidden;
+      min-height: 520px;
+    }
+    .map-svg { width: 100%; height: auto; display: block; }
+    .map-zone { cursor: pointer; transition: all 0.3s; }
+    .map-zone:hover { filter: brightness(1.1); }
+    .map-zone.active { filter: drop-shadow(0 0 12px rgba(255,140,66,0.8)); }
+    .map-pin {
+      position: absolute; transform: translate(-50%, -100%);
+      background: var(--coral-orange); color: #fff;
+      padding: 4px 10px; border-radius: var(--radius-pill);
+      font-size: 0.75rem; font-weight: 700; white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: pinBounce 2s ease-in-out infinite;
+    }
+    @keyframes pinBounce { 0%,100%{transform:translate(-50%,-100%);} 50%{transform:translate(-50%,-110%);} }
+    .map-pin.user { background: var(--deep-sea); }
+
+    /* 右侧信息面板 */
+    .zone-panel { background: #fff; border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-card); position: sticky; top: 90px; }
+    .zone-panel h3 { color: var(--deep-sea); margin-bottom: 6px; }
+    .zone-panel .zone-tag { font-size: 0.85rem; color: var(--ocean-blue); margin-bottom: 16px; }
+    .zone-panel .desc { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 18px; }
+    .zone-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .zone-meta .m { background: var(--mist); padding: 12px; border-radius: var(--radius-sm); text-align: center; }
+    .zone-meta .m .v { font-weight: 800; color: var(--deep-sea); font-size: 1.1rem; }
+    .zone-meta .m .l { font-size: 0.75rem; color: var(--text-muted); }
+    .queue-bar { height: 8px; border-radius: 4px; background: var(--foam); overflow: hidden; margin-top: 6px; }
+    .queue-bar span { display: block; height: 100%; border-radius: 4px; }
+    .q-low { background: var(--mint-green); }
+    .q-mid { background: var(--sun-yellow); }
+    .q-high { background: var(--coral-orange); }
+
+    /* 路线推荐 */
+    .route-section { padding: 40px 0; background: var(--mist); }
+    .route-tabs { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
+    .route-tab {
+      padding: 12px 24px; border-radius: var(--radius-pill);
+      background: #fff; color: var(--text-muted); font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .route-tab.active { background: var(--ocean-blue); color: #fff; }
+    .route-card {
+      background: #fff; border-radius: var(--radius-lg); padding: 28px;
+      box-shadow: var(--shadow-soft); display: none;
+    }
+    .route-card.active { display: block; }
+    .route-steps { display: flex; gap: 0; align-items: stretch; overflow-x: auto; padding-bottom: 8px; }
+    .route-step {
+      flex: 1; min-width: 140px; text-align: center; padding: 16px 8px;
+      position: relative;
+    }
+    .route-step .icon {
+      width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 10px;
+      background: linear-gradient(135deg, var(--sky-blue), var(--ocean-blue));
+      color: #fff; display: grid; place-items: center; font-size: 1.5rem;
+    }
+    .route-step h5 { color: var(--deep-sea); font-size: 0.9rem; }
+    .route-step p { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+    .route-step:not(:last-child)::after {
+      content: "→"; position: absolute; right: -10px; top: 28px;
+      color: var(--sky-blue); font-size: 1.2rem;
+    }
+    .route-info {
+      margin-top: 20px; display: flex; gap: 16px; flex-wrap: wrap;
+      justify-content: center; padding-top: 20px; border-top: 1px dashed var(--foam);
+    }
+    .route-info .ri { font-size: 0.88rem; color: var(--text-muted); }
+    .route-info .ri b { color: var(--deep-sea); }
+
+    /* 场次列表 */
+    .schedule-section { padding: 60px 0; }
+    .schedule-list { display: grid; gap: 14px; }
+    .schedule-item {
+      background: #fff; border-radius: var(--radius-md); padding: 20px 24px;
+      box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 20px;
+      flex-wrap: wrap;
+    }
+    .schedule-time {
+      flex-shrink: 0; width: 90px; text-align: center;
+      padding: 10px; background: var(--mist); border-radius: var(--radius-sm);
+    }
+    .schedule-time .t { font-weight: 800; color: var(--ocean-blue); font-size: 1.1rem; }
+    .schedule-time .d { font-size: 0.75rem; color: var(--text-muted); }
+    .schedule-info { flex: 1; min-width: 200px; }
+    .schedule-info h5 { color: var(--deep-sea); font-size: 1rem; }
+    .schedule-info p { font-size: 0.85rem; color: var(--text-muted); }
+    .schedule-actions { display: flex; gap: 8px; }
+    .btn-sm { padding: 8px 16px; border-radius: var(--radius-pill); font-size: 0.82rem; font-weight: 600; }
+    .btn-sm.primary { background: var(--ocean-blue); color: #fff; }
+    .btn-sm.live { background: var(--coral-orange); color: #fff; }
+    .live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #fff; margin-right: 6px; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="logo-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2-3 5-5 10-5s8 2 10 5c-2 3-5 5-10 5s-8-2-10-5z"/><path d="M2 12h20"/></svg>
+      </span>
+      蔚海狂欢季
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="reservation.html">预约报名</a>
+      <a href="map.html" class="active">入园导览</a>
+      <a href="science.html">科普打卡</a>
+      <a href="stamps.html">集章分享</a>
+      <a href="profile.html">个人中心</a>
+    </div>
+    <a href="reservation.html" class="nav-cta">立即预约</a>
+    <button class="menu-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
+  </nav>
+
+  <header class="page-hero ocean-bg">
+    <div class="ripple-layer"></div>
+    <h1>入园导览</h1>
+    <p>智能地图 · 实时场次 · 推荐路线，少走弯路畅玩全场</p>
+  </header>
+
+  <!-- 交互式地图 -->
+  <section class="map-section">
+    <div class="container">
+      <div class="map-layout">
+        <!-- 地图 -->
+        <div class="map-container fade-in">
+          <svg class="map-svg" viewBox="0 0 800 520" xmlns="http://www.w3.org/2000/svg">
+            <!-- 海水背景纹理 -->
+            <defs>
+              <pattern id="waves" width="60" height="20" patternUnits="userSpaceOnUse">
+                <path d="M0 10 Q 15 0 30 10 T 60 10" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+              </pattern>
+            </defs>
+            <rect width="800" height="520" fill="url(#waves)"/>
+            <!-- 入口 -->
+            <rect x="340" y="440" width="120" height="60" rx="10" fill="#FF8C42" class="map-zone" data-zone="entrance"/>
+            <text x="400" y="475" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">入口</text>
+            <!-- 展区 A 深海探秘 -->
+            <ellipse cx="180" cy="160" rx="100" ry="70" fill="#1A6B9E" class="map-zone active" data-zone="a"/>
+            <text x="180" y="155" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">A 深海探秘</text>
+            <text x="180" y="175" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">AR 体验区</text>
+            <!-- 展区 B 珊瑚花园 -->
+            <ellipse cx="400" cy="120" rx="90" ry="65" fill="#BB8FCE" class="map-zone" data-zone="b"/>
+            <text x="400" y="115" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">B 珊瑚花园</text>
+            <text x="400" y="135" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">活体展区</text>
+            <!-- 展区 C 极地世界 -->
+            <ellipse cx="620" cy="160" rx="95" ry="65" fill="#AED6F1" class="map-zone" data-zone="c"/>
+            <text x="620" y="155" text-anchor="middle" fill="#0A4D68" font-size="13" font-weight="700">C 极地世界</text>
+            <text x="620" y="175" text-anchor="middle" fill="rgba(10,77,104,0.7)" font-size="11">企鹅馆</text>
+            <!-- 展区 D 海洋剧场 -->
+            <rect x="100" y="300" width="140" height="90" rx="14" fill="#FFD93D" class="map-zone" data-zone="d"/>
+            <text x="170" y="340" text-anchor="middle" fill="#0A4D68" font-size="13" font-weight="700">D 海洋剧场</text>
+            <text x="170" y="360" text-anchor="middle" fill="rgba(10,77,104,0.7)" font-size="11">海豚表演</text>
+            <!-- 展区 E 互动实验室 -->
+            <rect x="330" y="290" width="140" height="90" rx="14" fill="#76D7C4" class="map-zone" data-zone="e"/>
+            <text x="400" y="330" text-anchor="middle" fill="#0A4D68" font-size="13" font-weight="700">E 互动实验室</text>
+            <text x="400" y="350" text-anchor="middle" fill="rgba(10,77,104,0.7)" font-size="11">科普课堂</text>
+            <!-- 展区 F 集章中心 -->
+            <rect x="560" y="300" width="140" height="90" rx="14" fill="#5DADE2" class="map-zone" data-zone="f"/>
+            <text x="630" y="340" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">F 集章中心</text>
+            <text x="630" y="360" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="11">兑换周边</text>
+            <!-- 路径连线 -->
+            <path d="M400 440 Q 400 390 180 230" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-dasharray="8 6"/>
+            <path d="M400 440 Q 400 390 400 185" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-dasharray="8 6"/>
+            <path d="M400 440 Q 400 390 620 225" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-dasharray="8 6"/>
+          </svg>
+          <div class="map-pin" style="left:22.5%; top:31%;">🔥 热门</div>
+          <div class="map-pin user" style="left:50%; top:84%;">📍 我在入口</div>
+        </div>
+
+        <!-- 右侧信息 -->
+        <div class="zone-panel fade-in">
+          <span class="tag tag-blue">当前选中</span>
+          <h3 id="zoneName">A · 深海探秘</h3>
+          <div class="zone-tag">AR 互动体验区 · 推荐游玩 30 分钟</div>
+          <p class="desc" id="zoneDesc">戴上 AR 眼镜潜入 3000 米深海，近距离观察鲸鲨、章鱼、发光水母等深海生物，感受神秘的深海世界。</p>
+          <div class="zone-meta">
+            <div class="m"><div class="v" id="zoneWait">15分</div><div class="l">预计排队</div></div>
+            <div class="m"><div class="v" id="zoneOpen">09:00</div><div class="l">开放时间</div></div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+              <span>拥挤程度</span><span id="queueText" style="color:var(--mint-green); font-weight:600;">畅通</span>
+            </div>
+            <div class="queue-bar"><span class="q-low" id="queueBar" style="width:30%"></span></div>
+          </div>
+          <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="toast('已为您规划前往 A 区的最优路线', 'success')">
+            🧭 导航到这里
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 智能路线推荐 -->
+  <section class="route-section">
+    <div class="container">
+      <div class="section-title fade-in">
+        <span class="eyebrow">智能路线</span>
+        <h2>推荐游览路线</h2>
+        <p>根据人流与场次实时推荐，选择适合你的游玩节奏</p>
+      </div>
+      <div class="route-tabs fade-in">
+        <div class="route-tab active" data-route="family">👨‍👩‍👧 亲子畅玩</div>
+        <div class="route-tab" data-route="teen">🎮 青少年探索</div>
+        <div class="route-tab" data-route="quick">⚡ 精华速览</div>
+      </div>
+
+      <div class="route-card active fade-in" data-card="family">
+        <div class="route-steps">
+          <div class="route-step"><div class="icon">🎬</div><h5>D 海洋剧场</h5><p>海豚表演 10:00</p></div>
+          <div class="route-step"><div class="icon">🌊</div><h5>A 深海探秘</h5><p>AR 体验</p></div>
+          <div class="route-step"><div class="icon">🐠</div><h5>B 珊瑚花园</h5><p>活体观察</p></div>
+          <div class="route-step"><div class="icon">🧪</div><h5>E 互动实验室</h5><p>科普课堂</p></div>
+          <div class="route-step"><div class="icon">🎁</div><h5>F 集章中心</h5><p>兑换周边</p></div>
+        </div>
+        <div class="route-info">
+          <span class="ri">⏱ 总时长 <b>约 3.5 小时</b></span>
+          <span class="ri">🚶 步行距离 <b>约 1.2 km</b></span>
+          <span class="ri">👥 避开高峰 <b>2 处</b></span>
+        </div>
+      </div>
+
+      <div class="route-card fade-in" data-card="teen">
+        <div class="route-steps">
+          <div class="route-step"><div class="icon">🌊</div><h5>A 深海探秘</h5><p>AR 沉浸</p></div>
+          <div class="route-step"><div class="icon">🐧</div><h5>C 极地世界</h5><p>企鹅互动</p></div>
+          <div class="route-step"><div class="icon">🧪</div><h5>E 互动实验室</h5><p>实验挑战</p></div>
+          <div class="route-step"><div class="icon">🐠</div><h5>B 珊瑚花园</h5><p>知识问答</p></div>
+          <div class="route-step"><div class="icon">🎁</div><h5>F 集章中心</h5><p>徽章解锁</p></div>
+        </div>
+        <div class="route-info">
+          <span class="ri">⏱ 总时长 <b>约 4 小时</b></span>
+          <span class="ri">🏆 可集章 <b>6 枚</b></span>
+          <span class="ri">🎮 互动任务 <b>8 个</b></span>
+        </div>
+      </div>
+
+      <div class="route-card fade-in" data-card="quick">
+        <div class="route-steps">
+          <div class="route-step"><div class="icon">🐠</div><h5>B 珊瑚花园</h5><p>快速打卡</p></div>
+          <div class="route-step"><div class="icon">🎬</div><h5>D 海洋剧场</h5><p>精华表演</p></div>
+          <div class="route-step"><div class="icon">🎁</div><h5>F 集章中心</h5><p>纪念兑换</p></div>
+        </div>
+        <div class="route-info">
+          <span class="ri">⏱ 总时长 <b>约 1.5 小时</b></span>
+          <span class="ri">⚡ 精华点位 <b>3 处</b></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 场次查询 -->
+  <section class="schedule-section">
+    <div class="container">
+      <div class="section-title fade-in">
+        <span class="eyebrow">场次查询</span>
+        <h2>今日演出 & 互动场次</h2>
+        <p>实时更新，一键预约心仪场次</p>
+      </div>
+      <div class="schedule-list">
+        <div class="schedule-item fade-in">
+          <div class="schedule-time"><div class="t">10:00</div><div class="d">上午场</div></div>
+          <div class="schedule-info"><h5>🐬 海豚欢乐秀</h5><p>D 区海洋剧场 · 时长 25 分钟</p></div>
+          <div class="schedule-actions"><button class="btn-sm live"><span class="live-dot"></span>正在进行</button></div>
+        </div>
+        <div class="schedule-item fade-in">
+          <div class="schedule-time"><div class="t">11:30</div><div class="d">上午场</div></div>
+          <div class="schedule-info"><h5>🐙 深海生物揭秘</h5><p>A 区深海探秘 · 研究员讲解 20 分钟</p></div>
+          <div class="schedule-actions"><button class="btn-sm primary" onclick="toast('已预约 11:30 场次')">预约</button></div>
+        </div>
+        <div class="schedule-item fade-in">
+          <div class="schedule-time"><div class="t">14:00</div><div class="d">下午场</div></div>
+          <div class="schedule-info"><h5>🧪 小小海洋学家</h5><p>E 区互动实验室 · 亲子实验 40 分钟</p></div>
+          <div class="schedule-actions"><button class="btn-sm primary" onclick="toast('已预约 14:00 场次')">预约</button></div>
+        </div>
+        <div class="schedule-item fade-in">
+          <div class="schedule-time"><div class="t">15:30</div><div class="d">下午场</div></div>
+          <div class="schedule-info"><h5>🫧 泡泡音乐派对</h5><p>中央广场 · 全场互动 30 分钟</p></div>
+          <div class="schedule-actions"><button class="btn-sm primary" onclick="toast('已预约 15:30 场次')">预约</button></div>
+        </div>
+        <div class="schedule-item fade-in">
+          <div class="schedule-time"><div class="t">16:30</div><div class="d">下午场</div></div>
+          <div class="schedule-info"><h5>🐧 企鹅喂食时间</h5><p>C 区极地世界 · 时长 15 分钟</p></div>
+          <div class="schedule-actions"><button class="btn-sm primary" onclick="toast('已预约 16:30 场次')">预约</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container" style="position: relative; z-index: 1;">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h3>🌊 蔚海狂欢季</h3>
+          <p style="font-size:0.88rem; max-width: 240px; opacity:0.8;">Blue-Sea Carnival<br>让海洋科普成为一场狂欢</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>快速导航</h4>
+            <a href="index.html">首页</a>
+            <a href="reservation.html">预约报名</a>
+            <a href="map.html">入园导览</a>
+          </div>
+          <div class="footer-col">
+            <h4>游玩体验</h4>
+            <a href="science.html">科普打卡</a>
+            <a href="stamps.html">集章分享</a>
+            <a href="profile.html">个人中心</a>
+          </div>
+          <div class="footer-col">
+            <h4>联系我们</h4>
+            <a href="#">客服热线 400-888-0000</a>
+            <a href="#">hello@bluesea.carnival</a>
+            <a href="#">海洋文化广场 A 馆</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Blue-Sea Carnival 蔚海狂欢季 · 让海洋科普触手可及</div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" aria-label="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <script>
+    window.PAGE_ID = 'map';
+    // 展区数据
+    const zones = {
+      a: { name: 'A · 深海探秘', tag: 'AR 互动体验区 · 推荐游玩 30 分钟', desc: '戴上 AR 眼镜潜入 3000 米深海，近距离观察鲸鲨、章鱼、发光水母等深海生物，感受神秘的深海世界。', wait: '15分', open: '09:00', queue: 30, qClass: 'q-low', qText: '畅通', qColor: 'var(--mint-green)' },
+      b: { name: 'B · 珊瑚花园', tag: '活体生物展区 · 推荐游玩 25 分钟', desc: '五彩斑斓的珊瑚礁生态系统，近距离观察小丑鱼、海葵、海星等热带海洋生物。', wait: '8分', open: '09:00', queue: 20, qClass: 'q-low', qText: '畅通', qColor: 'var(--mint-green)' },
+      c: { name: 'C · 极地世界', tag: '企鹅馆 · 推荐游玩 20 分钟', desc: '模拟极地生态环境，观看可爱的企鹅游泳、喂食，了解极地海洋保护知识。', wait: '25分', open: '09:30', queue: 65, qClass: 'q-mid', qText: '适中', qColor: 'var(--sun-yellow)' },
+      d: { name: 'D · 海洋剧场', tag: '海豚表演场 · 每场 25 分钟', desc: '聪明的海豚带来精彩表演，跳跃、顶球、呼啦圈，全场欢笑不断。', wait: '40分', open: '10:00', queue: 85, qClass: 'q-high', qText: '拥挤', qColor: 'var(--coral-orange)' },
+      e: { name: 'E · 互动实验室', tag: '科普课堂 · 每场 40 分钟', desc: '亲手做海洋科学小实验，了解海水盐度、浮力、海洋食物链等知识。', wait: '12分', open: '10:00', queue: 40, qClass: 'q-low', qText: '畅通', qColor: 'var(--mint-green)' },
+      f: { name: 'F · 集章中心', tag: '周边兑换 · 全天开放', desc: '集满展区印章兑换限定海洋主题周边，还有自动生成打卡纪念海报服务。', wait: '5分', open: '09:00', queue: 15, qClass: 'q-low', qText: '畅通', qColor: 'var(--mint-green)' }
+    };
+    document.querySelectorAll('.map-zone[data-zone]').forEach(z => {
+      z.addEventListener('click', () => {
+        document.querySelectorAll('.map-zone').forEach(x => x.classList.remove('active'));
+        z.classList.add('active');
+        const data = zones[z.dataset.zone];
+        if (!data) return;
+        document.getElementById('zoneName').textContent = data.name;
+        document.querySelector('.zone-tag').textContent = data.tag;
+        document.getElementById('zoneDesc').textContent = data.desc;
+        document.getElementById('zoneWait').textContent = data.wait;
+        document.getElementById('zoneOpen').textContent = data.open;
+        const bar = document.getElementById('queueBar');
+        bar.style.width = data.queue + '%';
+        bar.className = data.qClass;
+        const qt = document.getElementById('queueText');
+        qt.textContent = data.qText;
+        qt.style.color = data.qColor;
+      });
+    });
+    // 路线切换
+    document.querySelectorAll('.route-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.route-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.route-card').forEach(c => c.classList.remove('active'));
+        document.querySelector(`[data-card="${tab.dataset.route}"]`).classList.add('active');
+      });
+    });
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>

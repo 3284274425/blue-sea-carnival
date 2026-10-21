@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>预约报名 | 蔚海狂欢季 Blue-Sea Carnival</title>
+  <link rel="stylesheet" href="css/style.css?v=20261019f">
+  <style>
+    .page-hero {
+      background: linear-gradient(160deg, #E8F6FF, #B8E0F5);
+      padding: 140px 24px 80px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.5), transparent 40%);
+    }
+    .page-hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); color: var(--deep-sea); font-weight: 900; position: relative; }
+    .page-hero p { color: var(--text-muted); margin-top: 12px; position: relative; font-size: 1.05rem; }
+
+    /* 倒计时 */
+    .countdown-wrap { padding: 60px 0 40px; }
+    .countdown-card {
+      max-width: 720px; margin: 0 auto;
+      background: linear-gradient(135deg, var(--deep-sea), var(--ocean-blue));
+      color: #fff; border-radius: var(--radius-lg);
+      padding: 40px; text-align: center; position: relative; overflow: hidden;
+      box-shadow: var(--shadow-float);
+    }
+    .countdown-card::after {
+      content: ""; position: absolute; top: -50px; right: -50px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    .countdown-card h3 { font-size: 1.1rem; opacity: 0.9; margin-bottom: 24px; position: relative; }
+    .countdown { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; position: relative; }
+    .cd-item {
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(6px);
+      border-radius: var(--radius-md); padding: 20px 16px; min-width: 90px;
+    }
+    .cd-item .val { font-size: 2.8rem; font-weight: 900; color: var(--sun-yellow); line-height: 1; }
+    .cd-item .label { font-size: 0.8rem; opacity: 0.8; margin-top: 6px; }
+
+    /* 预约主区 */
+    .booking-wrap { display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: start; }
+    @media (max-width: 900px) { .booking-wrap { grid-template-columns: 1fr; } }
+
+    .booking-form { background: #fff; border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-card); }
+    .booking-form h3 { color: var(--deep-sea); font-size: 1.4rem; margin-bottom: 24px; }
+    .form-group { margin-bottom: 22px; }
+    .form-group label { display: block; font-weight: 600; color: var(--deep-sea); margin-bottom: 8px; font-size: 0.92rem; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 14px 18px; border: 2px solid var(--foam);
+      border-radius: var(--radius-sm); font-size: 0.95rem;
+      transition: border-color 0.2s; font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--sky-blue); }
+
+    /* 日期场次选择 */
+    .date-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .date-cell {
+      padding: 12px 6px; border: 2px solid var(--foam);
+      border-radius: var(--radius-sm); text-align: center; cursor: pointer;
+      transition: all 0.2s; background: #fff;
+    }
+    .date-cell:hover { border-color: var(--sky-blue); }
+    .date-cell.selected { background: var(--ocean-blue); color: #fff; border-color: var(--ocean-blue); }
+    .date-cell.disabled { opacity: 0.35; cursor: not-allowed; }
+    .date-cell .day { font-size: 0.78rem; opacity: 0.7; }
+    .date-cell .date { font-weight: 700; font-size: 1rem; margin-top: 2px; }
+
+    .slot-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .slot {
+      padding: 10px 18px; border: 2px solid var(--foam);
+      border-radius: var(--radius-pill); cursor: pointer; font-size: 0.9rem;
+      transition: all 0.2s; background: #fff;
+    }
+    .slot:hover { border-color: var(--sky-blue); }
+    .slot.selected { background: var(--coral-orange); color: #fff; border-color: var(--coral-orange); }
+    .slot .seats { font-size: 0.75rem; opacity: 0.7; margin-left: 6px; }
+    .slot.selected .seats { opacity: 0.9; }
+
+    /* 票种 */
+    .ticket-types { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .ticket-card {
+      padding: 20px; border: 2px solid var(--foam); border-radius: var(--radius-md);
+      cursor: pointer; transition: all 0.2s; background: #fff;
+    }
+    .ticket-card:hover { border-color: var(--sky-blue); }
+    .ticket-card.selected { border-color: var(--ocean-blue); background: #F0F8FF; }
+    .ticket-card .t-name { font-weight: 700; color: var(--deep-sea); }
+    .ticket-card .t-price { color: var(--coral-orange); font-weight: 800; font-size: 1.3rem; margin-top: 4px; }
+    .ticket-card .t-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+    .qty-control { display: inline-flex; align-items: center; gap: 12px; }
+    .qty-control button {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--foam); color: var(--deep-sea); font-weight: 700; font-size: 1.1rem;
+    }
+    .qty-control .qty { font-weight: 700; font-size: 1.1rem; min-width: 24px; text-align: center; }
+
+    /* 订单摘要 */
+    .order-summary {
+      background: linear-gradient(180deg, #fff, #F0F8FF);
+      border-radius: var(--radius-lg); padding: 32px;
+      box-shadow: var(--shadow-card); position: sticky; top: 90px;
+    }
+    .order-summary h3 { color: var(--deep-sea); margin-bottom: 20px; }
+    .summary-row { display: flex; justify-content: space-between; padding: 10px 0; font-size: 0.92rem; }
+    .summary-row .lbl { color: var(--text-muted); }
+    .summary-row .val { font-weight: 600; color: var(--deep-sea); }
+    .summary-divider { border-top: 1px dashed var(--foam); margin: 14px 0; }
+    .summary-total { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 24px; }
+    .summary-total .lbl { font-weight: 700; color: var(--deep-sea); }
+    .summary-total .val { font-size: 2rem; font-weight: 900; color: var(--coral-orange); }
+    .remind-btn {
+      width: 100%; padding: 14px; border-radius: var(--radius-pill);
+      background: #fff; color: var(--ocean-blue); border: 2px solid var(--sky-blue);
+      font-weight: 700; margin-top: 12px; transition: all 0.2s;
+    }
+    .remind-btn:hover { background: var(--foam); }
+
+    /* 必玩亮点 */
+    .must-play { padding: 60px 0; }
+    .must-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+    .must-card {
+      background: #fff; border-radius: var(--radius-md); padding: 24px;
+      box-shadow: var(--shadow-soft); border-left: 4px solid var(--coral-orange);
+    }
+    .must-card .num { font-size: 1.8rem; font-weight: 900; color: var(--coral-orange); opacity: 0.4; }
+    .must-card h4 { color: var(--deep-sea); margin: 6px 0 8px; }
+    .must-card p { font-size: 0.88rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="logo-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2-3 5-5 10-5s8 2 10 5c-2 3-5 5-10 5s-8-2-10-5z"/><path d="M2 12h20"/></svg>
+      </span>
+      蔚海狂欢季
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="reservation.html" class="active">预约报名</a>
+      <a href="map.html">入园导览</a>
+      <a href="science.html">科普打卡</a>
+      <a href="stamps.html">集章分享</a>
+      <a href="profile.html">个人中心</a>
+    </div>
+    <a href="reservation.html" class="nav-cta">立即预约</a>
+    <button class="menu-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
+  </nav>
+
+  <header class="page-hero ocean-bg">
+    <div class="ripple-layer"></div>
+    <h1>预约报名</h1>
+    <p>锁定你的海洋探索之旅，一键预约，智能提醒</p>
+  </header>
+
+  <!-- 倒计时 -->
+  <section class="countdown-wrap">
+    <div class="container">
+      <div class="countdown-card fade-in">
+        <h3>⏰ 距离活动开幕还有</h3>
+        <div class="countdown" id="countdown">
+          <div class="cd-item"><div class="val" id="cd-days">18</div><div class="label">天</div></div>
+          <div class="cd-item"><div class="val" id="cd-hours">06</div><div class="label">时</div></div>
+          <div class="cd-item"><div class="val" id="cd-mins">42</div><div class="label">分</div></div>
+          <div class="cd-item"><div class="val" id="cd-secs">30</div><div class="label">秒</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 预约表单 -->
+  <section class="section" style="padding-top: 20px;">
+    <div class="container">
+      <div class="booking-wrap">
+        <!-- 左侧表单 -->
+        <div class="booking-form fade-in">
+          <h3>🎫 填写预约信息</h3>
+          <div class="form-group">
+            <label>选择日期</label>
+            <div class="date-grid" id="dateGrid">
+              <div class="date-cell" data-date="7-15"><div class="day">周一</div><div class="date">7/15</div></div>
+              <div class="date-cell selected" data-date="7-16"><div class="day">周二</div><div class="date">7/16</div></div>
+              <div class="date-cell" data-date="7-17"><div class="day">周三</div><div class="date">7/17</div></div>
+              <div class="date-cell" data-date="7-18"><div class="day">周四</div><div class="date">7/18</div></div>
+              <div class="date-cell" data-date="7-19"><div class="day">周五</div><div class="date">7/19</div></div>
+              <div class="date-cell" data-date="7-20"><div class="day">周六</div><div class="date">7/20</div></div>
+              <div class="date-cell disabled" data-date="7-21"><div class="day">周日</div><div class="date">已满</div></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>选择场次</label>
+            <div class="slot-row">
+              <div class="slot selected">上午场 09:00-12:30 <span class="seats">余 86 席</span></div>
+              <div class="slot">下午场 13:30-17:00 <span class="seats">余 42 席</span></div>
+              <div class="slot">夜场 18:00-21:30 <span class="seats">余 120 席</span></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>票种选择</label>
+            <div class="ticket-types">
+              <div class="ticket-card selected" data-price="168">
+                <div class="t-name">亲子套票</div>
+                <div class="t-price">¥168</div>
+                <div class="t-desc">1大1小 · 含集章手册</div>
+              </div>
+              <div class="ticket-card" data-price="268">
+                <div class="t-name">家庭套票</div>
+                <div class="t-price">¥268</div>
+                <div class="t-desc">2大1小 · 含限量周边</div>
+              </div>
+              <div class="ticket-card" data-price="98">
+                <div class="t-name">青少年票</div>
+                <div class="t-price">¥98</div>
+                <div class="t-desc">单人 · 10-18岁适用</div>
+              </div>
+              <div class="ticket-card" data-price="128">
+                <div class="t-name">成人票</div>
+                <div class="t-price">¥128</div>
+                <div class="t-desc">单人 · 陪同家长</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>购票数量</label>
+            <div class="qty-control">
+              <button onclick="changeQty(-1)">−</button>
+              <span class="qty" id="qty">2</span>
+              <button onclick="changeQty(1)">+</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>联系人姓名</label>
+            <input type="text" placeholder="请输入家长姓名" value="李女士">
+          </div>
+          <div class="form-group">
+            <label>联系电话</label>
+            <input type="tel" placeholder="请输入手机号" value="138****8888">
+          </div>
+
+          <button class="btn btn-primary btn-lg" style="width:100%; justify-content:center;" onclick="toast('预约成功！已为您锁定 7月16日 上午场，提醒已设置', 'success')">
+            确认预约 · 立即支付
+          </button>
+        </div>
+
+        <!-- 右侧订单摘要 -->
+        <div class="order-summary fade-in">
+          <h3>📋 订单摘要</h3>
+          <div class="summary-row"><span class="lbl">活动日期</span><span class="val">7月16日 周二</span></div>
+          <div class="summary-row"><span class="lbl">活动场次</span><span class="val">上午场 09:00</span></div>
+          <div class="summary-row"><span class="lbl">票种</span><span class="val">亲子套票</span></div>
+          <div class="summary-row"><span class="lbl">数量</span><span class="val">× 2</span></div>
+          <div class="summary-divider"></div>
+          <div class="summary-row"><span class="lbl">早鸟优惠</span><span class="val" style="color:var(--mint-green)">− ¥30</span></div>
+          <div class="summary-total">
+            <span class="lbl">应付总额</span>
+            <span class="val" id="totalPrice">¥306</span>
+          </div>
+          <button class="remind-btn" onclick="toast('已设置开场前 24 小时提醒 🔔')">
+            🔔 设置开场提醒
+          </button>
+          <p style="font-size:0.78rem; color:var(--text-muted); text-align:center; margin-top:14px;">
+            支持随时退改 · 开场前 24h 自动提醒
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 必玩亮点 -->
+  <section class="must-play">
+    <div class="container">
+      <div class="section-title fade-in">
+        <span class="eyebrow">必玩亮点</span>
+        <h2>本场活动 5 大必体验</h2>
+      </div>
+      <div class="must-grid">
+        <div class="must-card fade-in">
+          <div class="num">01</div>
+          <h4>深海 AR 探险</h4>
+          <p>戴上 AR 眼镜潜入 3000 米深海，与鲸鲨共游。</p>
+        </div>
+        <div class="must-card fade-in">
+          <div class="num">02</div>
+          <h4>海洋生物课堂</h4>
+          <p>研究员带队，近距离观察活体海洋生物。</p>
+        </div>
+        <div class="must-card fade-in">
+          <div class="num">03</div>
+          <h4>泡泡音乐派对</h4>
+          <p>午后泡泡池狂欢，海洋主题 live 演出。</p>
+        </div>
+        <div class="must-card fade-in">
+          <div class="num">04</div>
+          <h4>集章兑换周边</h4>
+          <p>集满 6 章兑换限定海洋盲盒。</p>
+        </div>
+        <div class="must-card fade-in">
+          <div class="num">05</div>
+          <h4>纪念海报生成</h4>
+          <p>自动生成专属打卡海报，社交一键分享。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container" style="position: relative; z-index: 1;">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h3>🌊 蔚海狂欢季</h3>
+          <p style="font-size:0.88rem; max-width: 240px; opacity:0.8;">Blue-Sea Carnival<br>让海洋科普成为一场狂欢</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>快速导航</h4>
+            <a href="index.html">首页</a>
+            <a href="reservation.html">预约报名</a>
+            <a href="map.html">入园导览</a>
+          </div>
+          <div class="footer-col">
+            <h4>游玩体验</h4>
+            <a href="science.html">科普打卡</a>
+            <a href="stamps.html">集章分享</a>
+            <a href="profile.html">个人中心</a>
+          </div>
+          <div class="footer-col">
+            <h4>联系我们</h4>
+            <a href="#">客服热线 400-888-0000</a>
+            <a href="#">hello@bluesea.carnival</a>
+            <a href="#">海洋文化广场 A 馆</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Blue-Sea Carnival 蔚海狂欢季 · 让海洋科普触手可及</div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" aria-label="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <script>
+    window.PAGE_ID = 'reservation';
+    // 倒计时
+    let total = 18*86400 + 6*3600 + 42*60 + 30;
+    setInterval(() => {
+      total--; if (total < 0) total = 0;
+      const d = Math.floor(total/86400), h = Math.floor(total%86400/3600),
+            m = Math.floor(total%3600/60), s = total%60;
+      const pad = n => String(n).padStart(2,'0');
+      document.getElementById('cd-days').textContent = pad(d);
+      document.getElementById('cd-hours').textContent = pad(h);
+      document.getElementById('cd-mins').textContent = pad(m);
+      document.getElementById('cd-secs').textContent = pad(s);
+    }, 1000);
+
+    // 日期选择
+    document.querySelectorAll('.date-cell:not(.disabled)').forEach(cell => {
+      cell.addEventListener('click', () => {
+        document.querySelectorAll('.date-cell').forEach(c => c.classList.remove('selected'));
+        cell.classList.add('selected');
+      });
+    });
+    // 场次
+    document.querySelectorAll('.slot').forEach(s => {
+      s.addEventListener('click', () => {
+        document.querySelectorAll('.slot').forEach(x => x.classList.remove('selected'));
+        s.classList.add('selected');
+      });
+    });
+    // 票种
+    document.querySelectorAll('.ticket-card').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.ticket-card').forEach(x => x.classList.remove('selected'));
+        t.classList.add('selected');
+        updateTotal();
+      });
+    });
+    // 数量
+    let qty = 2;
+    function changeQty(n) {
+      qty = Math.max(1, Math.min(10, qty + n));
+      document.getElementById('qty').textContent = qty;
+      updateTotal();
+    }
+    window.changeQty = changeQty;
+    function updateTotal() {
+      const price = +document.querySelector('.ticket-card.selected').dataset.price;
+      const total = price * qty - 30;
+      document.getElementById('totalPrice').textContent = '¥' + total;
+    }
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>

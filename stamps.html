@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>集章分享 | 蔚海狂欢季 Blue-Sea Carnival</title>
+  <link rel="stylesheet" href="css/style.css?v=20261019f">
+  <style>
+    .page-hero {
+      background: linear-gradient(160deg, #E8F6FF, #B8E0F5);
+      padding: 140px 24px 60px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); color: var(--deep-sea); font-weight: 900; position: relative; }
+    .page-hero p { color: var(--text-muted); margin-top: 12px; position: relative; }
+
+    /* 集章进度 */
+    .stamp-progress { padding: 50px 0 30px; }
+    .stamp-book {
+      max-width: 860px; margin: 0 auto;
+      background: #fff; border-radius: var(--radius-lg);
+      padding: 40px; box-shadow: var(--shadow-card);
+      position: relative;
+    }
+    .stamp-book-head {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px; margin-bottom: 28px;
+    }
+    .stamp-book-head h3 { color: var(--deep-sea); font-size: 1.4rem; }
+    .stamp-count { font-size: 1.5rem; font-weight: 900; color: var(--coral-orange); }
+    .stamp-count span { color: var(--text-muted); font-size: 1rem; font-weight: 500; }
+    .stamp-grid {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px;
+    }
+    @media (max-width: 600px) { .stamp-grid { grid-template-columns: repeat(3, 1fr); } }
+    .stamp-cell {
+      aspect-ratio: 1; border-radius: 50%;
+      display: grid; place-items: center; text-align: center;
+      background: var(--mist); position: relative;
+      transition: all 0.4s;
+    }
+    .stamp-cell.collected {
+      background: linear-gradient(135deg, var(--coral-orange), #FFB27A);
+      color: #fff; box-shadow: 0 8px 24px rgba(255,140,66,0.4);
+      animation: stampPop 0.5s ease;
+    }
+    @keyframes stampPop { from { transform: scale(0); } to { transform: scale(1); } }
+    .stamp-cell .s-icon { font-size: 1.8rem; }
+    .stamp-cell .s-name { font-size: 0.7rem; margin-top: 2px; opacity: 0.85; }
+    .stamp-cell.empty { color: var(--text-muted); }
+    .stamp-cell.empty .s-icon { opacity: 0.3; font-size: 1.5rem; }
+    .stamp-cell .lock-overlay {
+      position: absolute; inset: 0; border-radius: 50%;
+      display: grid; place-items: center;
+      background: rgba(255,255,255,0.6); backdrop-filter: blur(2px);
+      font-size: 1.2rem;
+    }
+
+    /* 奖励兑换 */
+    .reward-section { padding: 50px 0; background: var(--mist); }
+    .reward-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px;
+    }
+    .reward-card {
+      background: #fff; border-radius: var(--radius-md); padding: 24px;
+      text-align: center; box-shadow: var(--shadow-soft);
+      transition: all 0.3s;
+    }
+    .reward-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-card); }
+    .reward-card .reward-img {
+      width: 100px; height: 100px; margin: 0 auto 16px; border-radius: 20px;
+      background: linear-gradient(135deg, var(--foam), var(--ice-blue));
+      display: grid; place-items: center; font-size: 3rem;
+    }
+    .reward-card h4 { color: var(--deep-sea); margin-bottom: 4px; }
+    .reward-card .cost { color: var(--coral-orange); font-weight: 800; margin: 8px 0; }
+    .reward-card .cost .need { color: var(--text-muted); font-weight: 500; font-size: 0.85rem; }
+    .reward-card .reward-btn {
+      width: 100%; padding: 12px; border-radius: var(--radius-pill);
+      background: var(--ocean-blue); color: #fff; font-weight: 700; font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .reward-card .reward-btn:hover { background: var(--deep-sea); }
+    .reward-card .reward-btn.disabled { background: var(--foam); color: var(--text-muted); cursor: not-allowed; }
+
+    /* 海报生成 */
+    .poster-section { padding: 60px 0; }
+    .poster-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    @media (max-width: 768px) { .poster-layout { grid-template-columns: 1fr; } }
+    .poster-preview {
+      background: #fff; border-radius: var(--radius-lg); padding: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .poster-canvas {
+      aspect-ratio: 3/4; border-radius: var(--radius-md); overflow: hidden;
+      background: linear-gradient(160deg, #1A6B9E 0%, #0A4D68 100%);
+      position: relative; display: flex; flex-direction: column;
+      padding: 28px; color: #fff;
+    }
+    .poster-canvas::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255,217,61,0.2), transparent 40%);
+    }
+    .poster-canvas .p-head { position: relative; display: flex; justify-content: space-between; align-items: flex-start; }
+    .poster-canvas .p-badge {
+      background: var(--coral-orange); padding: 4px 12px; border-radius: 20px;
+      font-size: 0.7rem; font-weight: 700;
+    }
+    .poster-canvas .p-title { position: relative; margin-top: auto; }
+    .poster-canvas .p-title h2 { font-size: 1.8rem; line-height: 1.1; }
+    .poster-canvas .p-title .sub { font-size: 0.85rem; opacity: 0.8; margin-top: 6px; }
+    .poster-canvas .p-stats {
+      position: relative; display: flex; gap: 16px; margin-top: 20px;
+      padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);
+    }
+    .poster-canvas .p-stats div { flex: 1; }
+    .poster-canvas .p-stats .v { font-size: 1.2rem; font-weight: 900; color: var(--sun-yellow); }
+    .poster-canvas .p-stats .l { font-size: 0.7rem; opacity: 0.7; }
+    .poster-canvas .p-foot { position: relative; text-align: center; margin-top: 14px; font-size: 0.7rem; opacity: 0.6; }
+    .poster-controls h3 { color: var(--deep-sea); margin-bottom: 20px; font-size: 1.3rem; }
+    .poster-style {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
+    }
+    .style-thumb {
+      aspect-ratio: 3/4; border-radius: 12px; cursor: pointer;
+      border: 3px solid transparent; transition: all 0.2s;
+      overflow: hidden;
+    }
+    .style-thumb.active { border-color: var(--coral-orange); }
+    .share-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+    .share-btn {
+      flex: 1; min-width: 100px; padding: 14px; border-radius: var(--radius-md);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font-size: 0.82rem; font-weight: 600; color: #fff;
+      transition: transform 0.2s;
+    }
+    .share-btn:hover { transform: translateY(-3px); }
+    .share-btn .s-icon { font-size: 1.5rem; }
+    .share-wechat { background: #07C160; }
+    .share-weibo { background: #E6162D; }
+    .share-xhs { background: #FE2C55; }
+    .share-save { background: var(--ocean-blue); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="logo-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2-3 5-5 10-5s8 2 10 5c-2 3-5 5-10 5s-8-2-10-5z"/><path d="M2 12h20"/></svg>
+      </span>
+      蔚海狂欢季
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="reservation.html">预约报名</a>
+      <a href="map.html">入园导览</a>
+      <a href="science.html">科普打卡</a>
+      <a href="stamps.html" class="active">集章分享</a>
+      <a href="profile.html">个人中心</a>
+    </div>
+    <a href="reservation.html" class="nav-cta">立即预约</a>
+    <button class="menu-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
+  </nav>
+
+  <header class="page-hero ocean-bg">
+    <div class="ripple-layer"></div>
+    <h1>集章分享</h1>
+    <p>集满印章兑换限定周边 · 自动生成打卡纪念海报</p>
+  </header>
+
+  <!-- 集章手册 -->
+  <section class="stamp-progress">
+    <div class="container">
+      <div class="stamp-book fade-in">
+        <div class="stamp-book-head">
+          <h3>📔 我的集章手册</h3>
+          <div class="stamp-count">3 <span>/ 6 枚印章</span></div>
+        </div>
+        <div class="stamp-grid">
+          <div class="stamp-cell collected">
+            <div class="s-icon">🌊</div>
+            <div class="s-name">深海</div>
+          </div>
+          <div class="stamp-cell collected">
+            <div class="s-icon">🐠</div>
+            <div class="s-name">珊瑚</div>
+          </div>
+          <div class="stamp-cell collected">
+            <div class="s-icon">🐧</div>
+            <div class="s-name">极地</div>
+          </div>
+          <div class="stamp-cell empty">
+            <div class="s-icon">🐬</div>
+            <div class="s-name">剧场</div>
+            <div class="lock-overlay">🔒</div>
+          </div>
+          <div class="stamp-cell empty">
+            <div class="s-icon">🧪</div>
+            <div class="s-name">实验</div>
+            <div class="lock-overlay">🔒</div>
+          </div>
+          <div class="stamp-cell empty">
+            <div class="s-icon">🎁</div>
+            <div class="s-name">集章</div>
+            <div class="lock-overlay">🔒</div>
+          </div>
+        </div>
+        <p style="text-align:center; margin-top:24px; color:var(--text-muted); font-size:0.9rem;">
+          还差 <b style="color:var(--coral-orange)">3 枚</b> 印章即可兑换限定海洋盲盒，继续探索吧！
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 奖励兑换 -->
+  <section class="reward-section">
+    <div class="container">
+      <div class="section-title fade-in">
+        <span class="eyebrow">周边兑换</span>
+        <h2>限定海洋主题周边</h2>
+        <p>使用集章数 + 知识币兑换，数量有限先到先得</p>
+      </div>
+      <div class="reward-grid">
+        <div class="reward-card fade-in">
+          <div class="reward-img">🐳</div>
+          <h4>鲸鲨毛绒公仔</h4>
+          <div class="cost">6 章 <span class="need">· 50 币</span></div>
+          <button class="reward-btn disabled" onclick="toast('印章不足，还差 3 枚')">印章不足</button>
+        </div>
+        <div class="reward-card fade-in">
+          <div class="reward-img">📔</div>
+          <h4>海洋科普手账</h4>
+          <div class="cost">3 章 <span class="need">· 20 币</span></div>
+          <button class="reward-btn" onclick="toast('兑换成功！请前往 F 区集章中心领取', 'success')">立即兑换</button>
+        </div>
+        <div class="reward-card fade-in">
+          <div class="reward-img">🎨</div>
+          <h4>海洋涂鸦套装</h4>
+          <div class="cost">4 章 <span class="need">· 30 币</span></div>
+          <button class="reward-btn disabled" onclick="toast('印章不足，还差 1 枚')">印章不足</button>
+        </div>
+        <div class="reward-card fade-in">
+          <div class="reward-img">🧢</div>
+          <h4>限定海洋棒球帽</h4>
+          <div class="cost">5 章 <span class="need">· 40 币</span></div>
+          <button class="reward-btn disabled" onclick="toast('印章不足，还差 2 枚')">印章不足</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 海报生成 -->
+  <section class="poster-section">
+    <div class="container">
+      <div class="section-title fade-in">
+        <span class="eyebrow">纪念海报</span>
+        <h2>一键生成打卡纪念海报</h2>
+        <p>自动汇总你的打卡数据，生成专属海洋纪念海报</p>
+      </div>
+      <div class="poster-layout fade-in">
+        <div class="poster-preview">
+          <div class="poster-canvas">
+            <div class="p-head">
+              <span class="p-badge">🌊 蔚海狂欢季</span>
+              <span style="font-size:1.5rem;">🐠</span>
+            </div>
+            <div class="p-title">
+              <h2>李同学的<br>海洋探索之旅</h2>
+              <p class="sub">2026.07.16 · 亲子畅玩路线</p>
+            </div>
+            <div class="p-stats">
+              <div><div class="v">3/6</div><div class="l">打卡展区</div></div>
+              <div><div class="v">30</div><div class="l">知识币</div></div>
+              <div><div class="v">2h</div><div class="l">游玩时长</div></div>
+            </div>
+            <div class="p-foot">Blue-Sea Carnival · 让海洋科普触手可及</div>
+          </div>
+        </div>
+        <div class="poster-controls">
+          <h3>🎨 选择海报风格</h3>
+          <div class="poster-style">
+            <div class="style-thumb active" style="background:linear-gradient(160deg,#1A6B9E,#0A4D68);" onclick="selectStyle(this)"></div>
+            <div class="style-thumb" style="background:linear-gradient(160deg,#FF8C42,#E67E22);" onclick="selectStyle(this)"></div>
+            <div class="style-thumb" style="background:linear-gradient(160deg,#BB8FCE,#8E44AD);" onclick="selectStyle(this)"></div>
+          </div>
+          <h3 style="margin-top:24px;">✨ 海报包含内容</h3>
+          <ul style="color:var(--text-muted); font-size:0.92rem; line-height:2;">
+            <li>✅ 个人打卡统计（展区、知识币、时长）</li>
+            <li>✅ 已收集的海洋徽章展示</li>
+            <li>✅ 随机海洋装饰插画</li>
+            <li>✅ 专属二维码（扫码查看游玩足迹）</li>
+          </ul>
+          <div class="share-btns">
+            <button class="share-btn share-wechat" onclick="toast('已分享到微信好友', 'success')">
+              <span class="s-icon">💬</span>微信
+            </button>
+            <button class="share-btn share-weibo" onclick="toast('已分享到微博', 'success')">
+              <span class="s-icon">📢</span>微博
+            </button>
+            <button class="share-btn share-xhs" onclick="toast('已分享到小红书', 'success')">
+              <span class="s-icon">📕</span>小红书
+            </button>
+            <button class="share-btn share-save" onclick="toast('海报已保存到相册', 'success')">
+              <span class="s-icon">💾</span>保存
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container" style="position: relative; z-index: 1;">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h3>🌊 蔚海狂欢季</h3>
+          <p style="font-size:0.88rem; max-width: 240px; opacity:0.8;">Blue-Sea Carnival<br>让海洋科普成为一场狂欢</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>快速导航</h4>
+            <a href="index.html">首页</a>
+            <a href="reservation.html">预约报名</a>
+            <a href="map.html">入园导览</a>
+          </div>
+          <div class="footer-col">
+            <h4>游玩体验</h4>
+            <a href="science.html">科普打卡</a>
+            <a href="stamps.html">集章分享</a>
+            <a href="profile.html">个人中心</a>
+          </div>
+          <div class="footer-col">
+            <h4>联系我们</h4>
+            <a href="#">客服热线 400-888-0000</a>
+            <a href="#">hello@bluesea.carnival</a>
+            <a href="#">海洋文化广场 A 馆</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Blue-Sea Carnival 蔚海狂欢季 · 让海洋科普触手可及</div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" aria-label="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <script>
+    window.PAGE_ID = 'stamps';
+    function selectStyle(el) {
+      document.querySelectorAll('.style-thumb').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+    }
+    window.selectStyle = selectStyle;
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>
