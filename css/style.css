@@ -44,14 +44,18 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: local('AaWeiTa'), local('AaWeiTaNingMengCha-2'), url('../fonts/weita.ttf') format('truetype');
+  src: local('AaWeiTa'), local('AaWeiTaNingMengCha-2'),
+       url('../fonts/weita.woff2') format('woff2'),
+       url('../fonts/weita.ttf') format('truetype');
 }
 @font-face {
   font-family: 'AaWeiTa';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: local('AaWeiTa'), local('AaWeiTaNingMengCha-2'), url('../fonts/weita.ttf') format('truetype');
+  src: local('AaWeiTa'), local('AaWeiTaNingMengCha-2'),
+       url('../fonts/weita.woff2') format('woff2'),
+       url('../fonts/weita.ttf') format('truetype');
 }
 
 /* ---------- CSS 变量 / 色彩规范（大幅拉浅清新） ---------- */
