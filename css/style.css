@@ -356,16 +356,14 @@ h1, h2, h3, h4, h5, h6,
   position: relative;
   overflow: hidden;
   padding: 100px 24px;
-  background: linear-gradient(135deg, #E8F6FF 0%, #B8E0F5 50%, #7EC8E3 100%);
+  min-height: 420px;
+  background: url('../images/cta-bg.jpg') center center / cover no-repeat;
 }
-/* 装饰：漂浮气泡 */
+/* 轻微白色遮罩，让文字清晰 */
 .cta-section::before {
   content: "";
   position: absolute; inset: 0;
-  background:
-    radial-gradient(circle at 15% 30%, rgba(255,255,255,0.6) 0, transparent 30px),
-    radial-gradient(circle at 85% 70%, rgba(255,255,255,0.5) 0, transparent 40px),
-    radial-gradient(circle at 50% 20%, rgba(255,255,255,0.4) 0, transparent 25px);
+  background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.45) 100%);
   z-index: 0;
 }
 .cta-section .container { z-index: 1; position: relative; }
