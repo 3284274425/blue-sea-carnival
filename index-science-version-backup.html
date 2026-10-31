@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>科普打卡 | 蔚海狂欢季 Blue-Sea Carnival</title>
+  <link rel="stylesheet" href="css/style.css?v=20261031b">
+  <style>
+    .page-hero {
+      background: linear-gradient(160deg, #E8F6FF, #B8E0F5);
+      padding: 140px 24px 60px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); color: var(--deep-sea); font-weight: 900; position: relative; }
+    .page-hero p { color: var(--text-muted); margin-top: 12px; position: relative; }
+
+    /* 进度条 */
+    .progress-wrap { padding: 40px 0; }
+    .progress-card {
+      max-width: 900px; margin: 0 auto;
+      background: #fff; border-radius: var(--radius-lg);
+      padding: 28px 32px; box-shadow: var(--shadow-card);
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .progress-ring {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: conic-gradient(var(--coral-orange) 0% 50%, var(--foam) 50%);
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+    .progress-ring::after {
+      content: ""; width: 70px; height: 70px; border-radius: 50%; background: #fff;
+      position: absolute;
+    }
+    .progress-ring { position: relative; }
+    .progress-ring .pct { position: relative; z-index: 1; font-weight: 900; color: var(--deep-sea); font-size: 1.3rem; }
+    .progress-info { flex: 1; min-width: 240px; }
+    .progress-info h3 { color: var(--deep-sea); font-size: 1.2rem; }
+    .progress-info p { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+    .progress-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* 科普卡片 */
+    .cards-section { padding: 40px 0 60px; }
+    .cards-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;
+    }
+    .science-card {
+      background: #fff; border-radius: var(--radius-lg); overflow: hidden;
+      box-shadow: var(--shadow-soft); transition: all 0.4s;
+      border: 2px solid transparent;
+    }
+    .science-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-card); }
+    .science-card.done { border-color: var(--mint-green); }
+    .science-card .card-head {
+      height: 170px; overflow: hidden; position: relative;
+    }
+    .science-card .card-head img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .science-card .card-head .stamp-mark {
+      position: absolute; top: 12px; right: 12px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--mint-green); color: #fff; display: grid; place-items: center;
+      font-size: 1.2rem; opacity: 0; transform: scale(0.5);
+      transition: all 0.3s;
+    }
+    .science-card.done .card-head .stamp-mark { opacity: 1; transform: scale(1); }
+    .science-card .card-body { padding: 22px; }
+    .science-card h4 { color: var(--deep-sea); font-size: 1.1rem; margin-bottom: 6px; }
+    .science-card .card-tag { font-size: 0.78rem; color: var(--ocean-blue); margin-bottom: 10px; }
+    .science-card p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px; }
+    .science-card .card-foot { display: flex; justify-content: space-between; align-items: center; }
+    .card-btn {
+      padding: 10px 18px; border-radius: var(--radius-pill);
+      font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+    }
+    .card-btn.primary { background: var(--ocean-blue); color: #fff; }
+    .card-btn.primary:hover { background: var(--deep-sea); }
+    .card-btn.done { background: var(--mint-green); color: #fff; }
+    .card-badge { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* AR 互动入口 */
+    .ar-section { padding: 60px 0; background: linear-gradient(135deg, var(--deep-sea), var(--ocean-blue)); color: #fff; }
+    .ar-section .section-title h2 { color: #fff; }
+    .ar-section .section-title p { color: rgba(255,255,255,0.8); }
+    .ar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    @media (max-width: 768px) { .ar-grid { grid-template-columns: 1fr; } }
+    .ar-visual {
+      background: rgba(255,255,255,0.1); border-radius: var(--radius-lg);
+      padding: 40px; text-align: center; backdrop-filter: blur(8px);
+    }
+    .ar-visual .ar-icon {
+      width: 120px; height: 120px; margin: 0 auto 20px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); display: grid; place-items: center; font-size: 3.5rem;
+    }
+    .ar-info h3 { font-size: 1.6rem; margin-bottom: 16px; }
+    .ar-info p { opacity: 0.9; margin-bottom: 20px; }
+    .ar-features { display: grid; gap: 12px; margin-bottom: 24px; }
+    .ar-feature { display: flex; align-items: center; gap: 12px; }
+    .ar-feature .check {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--sun-yellow); color: var(--deep-sea);
+      display: grid; place-items: center; font-size: 0.8rem; flex-shrink: 0;
+    }
+
+    /* 趣味问答 */
+    .quiz-section { padding: 60px 0; }
+    .quiz-card {
+      max-width: 720px; margin: 0 auto;
+      background: #fff; border-radius: var(--radius-lg);
+      padding: 36px; box-shadow: var(--shadow-card);
+    }
+    .quiz-progress { display: flex; gap: 6px; margin-bottom: 24px; }
+    .quiz-dot { flex: 1; height: 6px; border-radius: 3px; background: var(--foam); }
+    .quiz-dot.done { background: var(--mint-green); }
+    .quiz-dot.active { background: var(--ocean-blue); }
+    .quiz-question { font-size: 1.25rem; font-weight: 700; color: var(--deep-sea); margin-bottom: 24px; }
+    .quiz-options { display: grid; gap: 12px; margin-bottom: 24px; }
+    .quiz-option {
+      padding: 16px 20px; border: 2px solid var(--foam);
+      border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .quiz-option:hover { border-color: var(--sky-blue); background: var(--mist); }
+    .quiz-option.correct { border-color: var(--mint-green); background: #E8F8F5; }
+    .quiz-option.wrong { border-color: var(--coral-orange); background: #FDEDEC; }
+    .quiz-option .opt-letter {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--foam); color: var(--deep-sea);
+      display: grid; place-items: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+    }
+    .quiz-nav { display: flex; justify-content: space-between; }
+    .quiz-score { text-align: center; padding: 30px; }
+    .quiz-score .big { font-size: 3rem; font-weight: 900; color: var(--coral-orange); }
+  </style>
+<style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style><style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style></head>
+<body>
+  <nav class="navbar" style="box-shadow: rgba(10, 77, 104, 0.08) 0px 4px 20px;">
+    <a href="index.html" class="nav-brand">
+      <span class="logo-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2-3 5-5 10-5s8 2 10 5c-2 3-5 5-10 5s-8-2-10-5z"></path><path d="M2 12h20"></path></svg>
+      </span>
+      蔚海狂欢季
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="reservation.html">预约报名</a>
+      <a href="map.html">入园导览</a>
+      <a href="science.html" class="active">科普打卡</a>
+      <a href="stamps.html">集章分享</a>
+      <a href="profile.html">个人中心</a>
+    </div>
+    <a href="reservation.html" class="nav-cta">立即预约</a>
+    <button class="menu-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
+  </nav>
+
+  <header class="page-hero ocean-bg">
+    <div class="ripple-layer"></div>
+    <h1>科普打卡</h1>
+    <p>游戏化科普卡片 · 趣味问答 · 点位打卡任务系统</p>
+  <div class="doodle bubble" style="left: 5.02705%; top: 42.636%; animation-delay: 0.00320792s; animation-duration: 8.05013s; transform: rotate(-28.2224deg); width: 48.2107px; height: 48.2107px;"></div><div class="doodle bubble" style="left: 29.4635%; top: 82.5522%; animation-delay: 1.51347s; animation-duration: 7.89674s; transform: rotate(26.9678deg); width: 52.3691px; height: 52.3691px;"></div><div class="doodle bubble" style="left: 25.1337%; top: 66.9355%; animation-delay: 0.180115s; animation-duration: 10.4134s; transform: rotate(4.25354deg); width: 29.7296px; height: 29.7296px;"></div><div class="doodle bubble" style="left: 22.6436%; top: 18.5899%; animation-delay: 0.737487s; animation-duration: 9.7618s; transform: rotate(-19.2387deg); width: 26.3471px; height: 26.3471px;"></div><div class="doodle star" style="left: 74.0048%; top: 61.6265%; animation-delay: 0.810894s; animation-duration: 5.76753s; transform: rotate(-11.6296deg); font-size: 31.7486px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star" style="left: 69.2542%; top: 26.7209%; animation-delay: 1.5617s; animation-duration: 9.97578s; transform: rotate(-20.8712deg); font-size: 30.7494px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star" style="left: 40.6209%; top: 26.0654%; animation-delay: 0.33558s; animation-duration: 8.67292s; transform: rotate(19.3282deg); font-size: 28.2378px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 8.92249%; top: 34.797%; animation-delay: 2.73158s; animation-duration: 10.894s; transform: rotate(-28.2767deg); font-size: 38.4687px; color: rgb(126, 215, 193);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7ED7C1" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 63.6254%; top: 81.0283%; animation-delay: 3.54928s; animation-duration: 5.92996s; transform: rotate(6.10863deg); font-size: 37.2939px; color: rgb(46, 134, 171);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E86AB" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 65.208%; top: 80.6039%; animation-delay: 2.03764s; animation-duration: 7.25783s; transform: rotate(2.75397deg); font-size: 23.8952px; color: rgb(255, 217, 61);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFD93D" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 82.7069%; top: 45.2855%; animation-delay: 1.49658s; animation-duration: 10.4149s; transform: rotate(-16.4577deg); font-size: 39.8648px; color: rgb(255, 181, 197);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFB5C5" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 87.3584%; top: 21.5233%; animation-delay: 1.42183s; animation-duration: 5.07864s; transform: rotate(7.05707deg); font-size: 33.8878px; color: rgb(255, 217, 61);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFD93D" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle tape blue" style="left: 78.0382%; top: 68.2921%; animation-delay: 3.70744s; animation-duration: 6.49384s; transform: rotate(-18.5351deg); width: 72.8077px; height: 23.3003px;"></div><div class="doodle tape" style="left: 23.4988%; top: 46.5832%; animation-delay: 1.39387s; animation-duration: 9.09464s; transform: rotate(23.8803deg); width: 58.3535px; height: 19.1735px;"></div><div class="doodle tape" style="left: 51.6621%; top: 49.6486%; animation-delay: 0.337307s; animation-duration: 6.49726s; transform: rotate(26.3276deg); width: 83.8715px; height: 16.6418px;"></div><div class="doodle dots" style="left: 63.2857%; top: 41.3115%; animation-delay: 3.89079s; animation-duration: 5.81273s; transform: rotate(15.3984deg); width: 67.3669px; height: 67.3669px;"></div><div class="doodle dots" style="left: 58.3446%; top: 15.1616%; animation-delay: 3.80451s; animation-duration: 8.25226s; transform: rotate(-25.0872deg); width: 46.7284px; height: 46.7284px;"></div><div class="doodle dots" style="left: 84.8689%; top: 85.7741%; animation-delay: 0.15832s; animation-duration: 6.6407s; transform: rotate(-11.4407deg); width: 42.5348px; height: 42.5348px;"></div><div class="doodle diamond blue" style="left: 76.6677%; top: 10.58%; animation-delay: 0.841722s; animation-duration: 8.4539s; transform: rotate(-19.2888deg);"></div><div class="doodle diamond" style="left: 16.7612%; top: 84.2669%; animation-delay: 3.0532s; animation-duration: 10.567s; transform: rotate(-28.5796deg);"></div><div class="doodle diamond" style="left: 11.3383%; top: 20.9659%; animation-delay: 0.812809s; animation-duration: 7.44692s; transform: rotate(8.39835deg);"></div><div class="doodle diamond yellow" style="left: 84.712%; top: 60.7643%; animation-delay: 1.11416s; animation-duration: 9.4533s; transform: rotate(19.154deg);"></div><div class="doodle wave" style="left: 40.926%; top: 12.0209%; animation-delay: 1.45221s; animation-duration: 6.33541s; transform: rotate(29.6185deg); color: rgb(255, 217, 61);"><svg width="90" height="24" viewBox="0 0 90 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M0 12 Q 15 0 30 12 T 60 12 T 90 12"></path></svg></div><div class="doodle wave" style="left: 43.7719%; top: 29.0041%; animation-delay: 0.924105s; animation-duration: 9.04681s; transform: rotate(-8.19451deg); color: rgb(255, 140, 66);"><svg width="90" height="24" viewBox="0 0 90 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M0 12 Q 15 0 30 12 T 60 12 T 90 12"></path></svg></div><div class="doodle bubble" style="left: 83.1484%; top: 7.54217%; animation-delay: 1.507s; animation-duration: 6.2018s; transform: rotate(-2.69297deg); width: 42.3564px; height: 42.3564px;"></div><div class="doodle bubble" style="left: 25.7198%; top: 20.9965%; animation-delay: 0.721626s; animation-duration: 8.37809s; transform: rotate(-2.53227deg); width: 32.5743px; height: 32.5743px;"></div><div class="doodle bubble" style="left: 72.8223%; top: 76.8828%; animation-delay: 0.328335s; animation-duration: 10.527s; transform: rotate(-5.22153deg); width: 26.5583px; height: 26.5583px;"></div><div class="doodle bubble" style="left: 35.6529%; top: 69.0118%; animation-delay: 1.0394s; animation-duration: 8.91668s; transform: rotate(-17.4964deg); width: 50.2513px; height: 50.2513px;"></div><div class="doodle star" style="left: 34.8154%; top: 39.9731%; animation-delay: 0.491032s; animation-duration: 7.71884s; transform: rotate(-24.7255deg); font-size: 20.5451px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star" style="left: 92.1764%; top: 23.7998%; animation-delay: 1.90848s; animation-duration: 10.8012s; transform: rotate(-25.5375deg); font-size: 15.4218px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star" style="left: 4.8823%; top: 47.7352%; animation-delay: 1.1297s; animation-duration: 5.88868s; transform: rotate(-2.70922deg); font-size: 16.2939px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 59.3045%; top: 72.0344%; animation-delay: 1.28091s; animation-duration: 10.7784s; transform: rotate(24.6593deg); font-size: 33.6484px; color: rgb(255, 217, 61);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFD93D" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 52.7921%; top: 23.2349%; animation-delay: 0.931633s; animation-duration: 5.73847s; transform: rotate(-14.6407deg); font-size: 30.77px; color: rgb(126, 215, 193);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7ED7C1" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 19.8333%; top: 78.9311%; animation-delay: 1.09884s; animation-duration: 10.5492s; transform: rotate(12.499deg); font-size: 32.7638px; color: rgb(255, 140, 66);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 79.6913%; top: 76.424%; animation-delay: 1.99702s; animation-duration: 7.61724s; transform: rotate(11.6813deg); font-size: 35.1924px; color: rgb(126, 215, 193);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7ED7C1" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 24.8283%; top: 29.8606%; animation-delay: 2.58563s; animation-duration: 5.81381s; transform: rotate(14.2705deg); font-size: 25.4557px; color: rgb(255, 140, 66);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle tape yellow" style="left: 50.8828%; top: 64.8713%; animation-delay: 1.2279s; animation-duration: 8.3885s; transform: rotate(-20.8873deg); width: 51.5552px; height: 25.2728px;"></div><div class="doodle tape yellow" style="left: 18.5102%; top: 44.0389%; animation-delay: 1.0517s; animation-duration: 10.9838s; transform: rotate(20.5267deg); width: 57.8381px; height: 18.9989px;"></div><div class="doodle tape" style="left: 60.7274%; top: 24.3049%; animation-delay: 3.14993s; animation-duration: 10.9477s; transform: rotate(28.5081deg); width: 97.9721px; height: 17.6399px;"></div><div class="doodle dots" style="left: 80.1223%; top: 82.4569%; animation-delay: 0.468855s; animation-duration: 8.01619s; transform: rotate(-21.3424deg); width: 61.3161px; height: 61.3161px;"></div><div class="doodle dots" style="left: 22.7148%; top: 43.4288%; animation-delay: 0.936446s; animation-duration: 5.00194s; transform: rotate(23.9846deg); width: 39.7941px; height: 39.7941px;"></div><div class="doodle dots" style="left: 25.7008%; top: 24.1633%; animation-delay: 3.55479s; animation-duration: 7.76199s; transform: rotate(15.6422deg); width: 70.2955px; height: 70.2955px;"></div><div class="doodle diamond" style="left: 38.7678%; top: 25.2574%; animation-delay: 2.66738s; animation-duration: 8.13945s; transform: rotate(-28.7956deg);"></div><div class="doodle diamond blue" style="left: 56.223%; top: 59.3518%; animation-delay: 2.91616s; animation-duration: 7.39569s; transform: rotate(-9.38947deg);"></div><div class="doodle diamond" style="left: 37.2254%; top: 40.6703%; animation-delay: 1.33502s; animation-duration: 8.89203s; transform: rotate(-26.3137deg);"></div><div class="doodle diamond" style="left: 29.2553%; top: 22.2309%; animation-delay: 0.334502s; animation-duration: 9.82818s; transform: rotate(-11.2278deg);"></div><div class="doodle wave" style="left: 49.6013%; top: 35.5529%; animation-delay: 2.39909s; animation-duration: 6.72338s; transform: rotate(12.0974deg); color: rgb(255, 217, 61);"><svg width="90" height="24" viewBox="0 0 90 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M0 12 Q 15 0 30 12 T 60 12 T 90 12"></path></svg></div><div class="doodle wave" style="left: 29.1769%; top: 45.7225%; animation-delay: 2.41517s; animation-duration: 7.42184s; transform: rotate(-29.8857deg); color: rgb(255, 140, 66);"><svg width="90" height="24" viewBox="0 0 90 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M0 12 Q 15 0 30 12 T 60 12 T 90 12"></path></svg></div></header>
+
+  <!-- 打卡进度 -->
+  <section class="progress-wrap">
+    <div class="container">
+      <div class="progress-card fade-in visible">
+        <div class="progress-ring"><span class="pct">3/6</span></div>
+        <div class="progress-info">
+          <h3>小海洋家 · 李同学</h3>
+          <p>已完成 3 个展区打卡，再集 3 章即可兑换限定周边 🎁</p>
+          <div class="progress-tags" style="margin-top:10px;">
+            <span class="tag tag-green">✓ 深海探秘</span>
+            <span class="tag tag-green">✓ 珊瑚花园</span>
+            <span class="tag tag-green">✓ 极地世界</span>
+            <span class="tag tag-blue">○ 海洋剧场</span>
+            <span class="tag tag-blue">○ 互动实验室</span>
+            <span class="tag tag-blue">○ 集章中心</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 科普卡片 -->
+  <section class="cards-section">
+    <div class="container">
+      <div class="section-title fade-in visible">
+        <span class="eyebrow">科普卡片</span>
+        <h2>六大展区 打卡学习</h2>
+        <p>每个展区一张游戏化科普卡，完成任务即可盖章</p>
+      </div>
+      <div class="cards-grid">
+        <div class="science-card done fade-in visible">
+          <div class="card-head"><img src="images/user-img-1.png" alt="深海探秘"><div class="stamp-mark">✓</div></div>
+          <div class="card-body">
+            <h4>深海探秘</h4>
+            <div class="card-tag">海洋生物 · 难度 ★★☆</div>
+            <p>认识发光水母、深海鮟鱇鱼，了解 3000 米深海的神奇生态。</p>
+            <div class="card-foot">
+              <button class="card-btn done">已完成</button>
+              <span class="card-badge">+10 知识币</span>
+            </div>
+          </div>
+        </div>
+        <div class="science-card done fade-in visible">
+          <div class="card-head"><img src="images/user-img-2.jpg" alt="珊瑚花园"><div class="stamp-mark">✓</div></div>
+          <div class="card-body">
+            <h4>珊瑚花园</h4>
+            <div class="card-tag">生态系统 · 难度 ★★☆</div>
+            <p>观察小丑鱼与海葵共生，了解珊瑚礁对海洋的重要意义。</p>
+            <div class="card-foot">
+              <button class="card-btn done">已完成</button>
+              <span class="card-badge">+10 知识币</span>
+            </div>
+          </div>
+        </div>
+        <div class="science-card done fade-in visible">
+          <div class="card-head"><img src="images/user-img-3.jpg" alt="极地世界"><div class="stamp-mark">✓</div></div>
+          <div class="card-body">
+            <h4>极地世界</h4>
+            <div class="card-tag">极地生态 · 难度 ★☆☆</div>
+            <p>企鹅为什么不怕冷？极地冰层融化对全球气候的影响。</p>
+            <div class="card-foot">
+              <button class="card-btn done">已完成</button>
+              <span class="card-badge">+10 知识币</span>
+            </div>
+          </div>
+        </div>
+        <div class="science-card fade-in visible">
+          <div class="card-head"><img src="images/user-img-4.jpg" alt="海洋剧场"><div class="stamp-mark">✓</div></div>
+          <div class="card-body">
+            <h4>海洋剧场</h4>
+            <div class="card-tag">动物行为 · 难度 ★☆☆</div>
+            <p>海豚有多聪明？了解海洋哺乳动物的智商与交流方式。</p>
+            <div class="card-foot">
+              <button class="card-btn primary" onclick="toast('正在前往 D 区海洋剧场...')">前往打卡</button>
+              <span class="card-badge">+10 知识币</span>
+            </div>
+          </div>
+        </div>
+        <div class="science-card fade-in visible">
+          <div class="card-head"><img src="images/user-img-5.jpg" alt="互动实验室"><div class="stamp-mark">✓</div></div>
+          <div class="card-body">
+            <h4>互动实验室</h4>
+            <div class="card-tag">科学实验 · 难度 ★★★</div>
+            <p>动手做海水盐度实验，理解浮力与密度的科学原理。</p>
+            <div class="card-foot">
+              <button class="card-btn primary" onclick="toast('正在前往 E 区互动实验室...')">前往打卡</button>
+              <span class="card-badge">+15 知识币</span>
+            </div>
+          </div>
+        </div>
+        <div class="science-card fade-in visible">
+          <div class="card-head"><img src="images/user-img-6.jpg" alt="集章中心"><div class="stamp-mark">✓</div></div>
+          <div class="card-body">
+            <h4>集章中心</h4>
+            <div class="card-tag">综合任务 · 难度 ★★☆</div>
+            <p>终极挑战：海洋知识大闯关，集满所有印章兑换限定周边。</p>
+            <div class="card-foot">
+              <button class="card-btn primary" onclick="toast('正在前往 F 区集章中心...')">前往打卡</button>
+              <span class="card-badge">+20 知识币</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AR 互动 -->
+  <section class="ar-section">
+    <div class="container">
+      <div class="section-title fade-in">
+        <span class="eyebrow" style="background:rgba(255,255,255,0.2); color:#FFD93D;">AR 互动</span>
+        <h2>AR 深海探险入口</h2>
+        <p>打开手机扫一扫，与深海生物零距离互动</p>
+      </div>
+      <div class="ar-grid fade-in">
+        <div class="ar-visual">
+          <div class="ar-icon">📱</div>
+          <h3>扫一扫 开启深海之旅</h3>
+          <p style="opacity:0.8; font-size:0.9rem; margin-top:8px;">对准展区 AR 标记点即可触发</p>
+          <button class="btn btn-primary btn-lg" style="margin-top:20px;" onclick="toast('AR 摄像头已开启，请对准标记点')">
+            🎥 启动 AR 相机
+          </button>
+        </div>
+        <div class="ar-info">
+          <h3>AR 互动能玩什么？</h3>
+          <div class="ar-features">
+            <div class="ar-feature"><span class="check">✓</span><span>360° 观察鲸鲨游动，了解其洄游习性</span></div>
+            <div class="ar-feature"><span class="check">✓</span><span>与发光水母合影，记录奇幻瞬间</span></div>
+            <div class="ar-feature"><span class="check">✓</span><span>触碰屏幕探索章鱼变色原理</span></div>
+            <div class="ar-feature"><span class="check">✓</span><span>完成 AR 任务获得专属虚拟徽章</span></div>
+          </div>
+          <p style="font-size:0.85rem; opacity:0.7;">* AR 体验需使用园区提供的平板或扫码进入小程序</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 趣味问答 -->
+  <section class="quiz-section">
+    <div class="container">
+      <div class="section-title fade-in">
+        <span class="eyebrow">趣味问答</span>
+        <h2>海洋知识小测验</h2>
+        <p>答对题目赚取知识币，解锁更多海洋秘密</p>
+      </div>
+      <div class="quiz-card fade-in" id="quizCard">
+        <div class="quiz-progress">
+          <div class="quiz-dot done"></div>
+          <div class="quiz-dot done"></div>
+          <div class="quiz-dot active"></div>
+          <div class="quiz-dot"></div>
+          <div class="quiz-dot"></div>
+        </div>
+        <div class="quiz-question" id="quizQ">下列哪种海洋生物被称为"海洋中的医生"？</div>
+        <div class="quiz-options" id="quizOpts">
+          <div class="quiz-option" onclick="answerQuiz(this, false)"><span class="opt-letter">A</span> 小丑鱼</div>
+          <div class="quiz-option" onclick="answerQuiz(this, true)"><span class="opt-letter">B</span> 清洁鱼</div>
+          <div class="quiz-option" onclick="answerQuiz(this, false)"><span class="opt-letter">C</span> 河豚</div>
+          <div class="quiz-option" onclick="answerQuiz(this, false)"><span class="opt-letter">D</span> 海马</div>
+        </div>
+        <div class="quiz-nav">
+          <button class="btn btn-secondary">跳过</button>
+          <button class="btn btn-primary" onclick="toast('答对了！+5 知识币', 'success')">确认答案</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container" style="position: relative; z-index: 1;">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h3>🌊 蔚海狂欢季</h3>
+          <p style="font-size:0.88rem; max-width: 240px; opacity:0.8;">Blue-Sea Carnival<br>让海洋科普成为一场狂欢</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>快速导航</h4>
+            <a href="index.html">首页</a>
+            <a href="reservation.html">预约报名</a>
+            <a href="map.html">入园导览</a>
+          </div>
+          <div class="footer-col">
+            <h4>游玩体验</h4>
+            <a href="science.html">科普打卡</a>
+            <a href="stamps.html">集章分享</a>
+            <a href="profile.html">个人中心</a>
+          </div>
+          <div class="footer-col">
+            <h4>联系我们</h4>
+            <a href="#">客服热线 400-888-0000</a>
+            <a href="#">hello@bluesea.carnival</a>
+            <a href="#">海洋文化广场 A 馆</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Blue-Sea Carnival 蔚海狂欢季 · 让海洋科普触手可及</div>
+    </div>
+  </footer>
+
+  <button class="back-to-top show" aria-label="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+  </button>
+
+  <script>
+    window.PAGE_ID = 'science';
+    function answerQuiz(el, correct) {
+      document.querySelectorAll('.quiz-option').forEach(o => o.style.pointerEvents = 'none');
+      if (correct) {
+        el.classList.add('correct');
+      } else {
+        el.classList.add('wrong');
+        document.querySelectorAll('.quiz-option')[1].classList.add('correct');
+      }
+      setTimeout(() => toast(correct ? '答对了！+5 知识币 🎉' : '正确答案是 B 清洁鱼，再加油～', correct ? 'success' : 'info'), 300);
+    }
+    window.answerQuiz = answerQuiz;
+  </script>
+  <script src="js/main.js"></script>
+
+
+
+</body></html>
