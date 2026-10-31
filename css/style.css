@@ -129,7 +129,7 @@ h1, h2, h3, h4, h5, h6,
 /* ---------- 海洋波光背景纹理（明亮水彩晕染） ---------- */
 .ocean-bg {
   position: relative;
-  background: url('images/sub-banner-bg.jpg') center/cover no-repeat;
+  background: url('../images/sub-banner-bg.jpg') center/cover no-repeat;
   overflow: hidden;
 }
 .ocean-bg::before {
