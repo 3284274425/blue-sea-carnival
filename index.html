@@ -2,135 +2,159 @@
 <html lang="zh-CN"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>预约报名 | 蔚海狂欢季 Blue-Sea Carnival</title>
-  <link rel="stylesheet" href="css/style.css?v=20261031g">
+  <title>蔚海狂欢季 Blue-Sea Carnival | 解锁海洋奥秘 畅享探索狂欢</title>
+  <link rel="stylesheet" href="css/style.css?v=20261031d">
   <style>
-    .page-hero {
-      padding: 140px 24px 80px;
-      text-align: center; position: relative; overflow: hidden;
+    /* ========== 首屏 Hero ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; padding: 120px 24px 80px;
+      text-align: center;
     }
-    .page-hero::before {
+    .hero-content { position: relative; z-index: 2; max-width: 820px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px; background: rgba(255,255,255,0.7);
+      border-radius: var(--radius-pill); color: var(--ocean-blue);
+      font-weight: 700; font-size: 0.9rem; margin-bottom: 28px;
+      backdrop-filter: blur(6px); box-shadow: var(--shadow-soft);
+    }
+    .hero h1 {
+      font-size: clamp(2.6rem, 7vw, 5rem);
+      font-weight: 900; line-height: 1.05;
+      color: var(--deep-sea); margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--ocean-blue), var(--coral-orange));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero .subtitle {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--text-dark); font-weight: 600; margin-bottom: 14px;
+    }
+    .hero .desc {
+      font-size: 1rem; color: var(--text-muted);
+      max-width: 560px; margin: 0 auto 40px;
+    }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* 海洋主视觉插画 */
+    .hero-visual {
+      margin-top: 60px; position: relative;
+      max-width: 680px; margin-left: auto; margin-right: auto;
+    }
+    .hero-visual svg { width: 100%; height: auto; filter: drop-shadow(0 20px 40px rgba(10,77,104,0.2)); }
+
+    /* ========== 活动亮点 ========== */
+    .highlights { background: var(--off-white); }
+    .highlight-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .highlight-card {
+      background: #fff; border-radius: var(--radius-lg, 18px);
+      overflow: hidden; text-align: center;
+      border: 1px solid rgba(174,214,241,0.3);
+      box-shadow: var(--shadow-soft);
+      transition: all 0.4s var(--ease-soft);
+      position: relative;
+    }
+    .highlight-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-card); }
+    .highlight-card .card-img {
+      width: 100%; height: 170px; object-fit: cover;
+      display: block;
+    }
+    .highlight-card .card-body { padding: 22px 20px 26px; }
+    .highlight-card h3 { font-size: 1.15rem; color: var(--deep-sea); margin-bottom: 8px; font-weight: 600; }
+    .highlight-card p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; }
+
+    /* ========== 用户旅程六阶段 ========== */
+    .journey { background: linear-gradient(180deg, var(--mist), var(--off-white)); }
+    .journey-steps {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px;
+      position: relative;
+    }
+    .journey-step {
+      background: #fff; border-radius: var(--radius-md);
+      padding: 24px 16px; text-align: center;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s; cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .journey-step:hover { border-color: var(--sky-blue); transform: translateY(-4px); }
+    .journey-step .num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--ocean-blue), var(--sky-blue));
+      color: #fff; font-weight: 800; display: grid; place-items: center;
+      margin: 0 auto 12px;
+    }
+    .journey-step h4 { font-size: 0.95rem; color: var(--deep-sea); margin-bottom: 6px; }
+    .journey-step p { font-size: 0.78rem; color: var(--text-muted); }
+    .journey-step .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--coral-orange); margin: 10px auto 0; }
+
+    @media (max-width: 900px) {
+      .journey-steps { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .journey-steps { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ========== 数据统计 ========== */
+    .stats {
+      color: #fff;
+      border-radius: var(--radius-lg);
+      padding: 50px 40px; margin: 60px auto;
+      max-width: 1100px;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 30px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    /* stats 背景图：通过 HTML <img> 控制，方便用户直接替换 */
+    .stats-bg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      z-index: -1;
+    }
+    .stats::before {
       content: ""; position: absolute; inset: 0;
-      background: none;
+      background: linear-gradient(135deg, rgba(10,77,104,0.82) 0%, rgba(26,107,158,0.75) 50%, rgba(58,155,214,0.72) 100%);
+      z-index: 0;
     }
-    .page-hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); color: var(--deep-sea); font-weight: 900; position: relative; }
-    .page-hero p { color: var(--text-muted); margin-top: 12px; position: relative; font-size: 1.05rem; }
+    .stats::after {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.12) 0%, transparent 60%);
+      z-index: 0;
+    }
+    .stat-item { position: relative; z-index: 1; }
+    .stat-item .num { font-size: 2.8rem; font-weight: 800; color: var(--sun-yellow, #FFD93D); text-shadow: 0 3px 12px rgba(0,0,0,0.25); }
+    .stat-item .label { font-size: 0.92rem; opacity: 0.92; margin-top: 8px; letter-spacing: 1px; }
+    @media (max-width: 700px) { .stats { grid-template-columns: repeat(2, 1fr); padding: 36px 20px; } }
 
-    /* 倒计时 */
-    .countdown-wrap { padding: 60px 0 40px; }
-    .countdown-card {
-      max-width: 720px; margin: 0 auto;
-      background: linear-gradient(135deg, var(--deep-sea), var(--ocean-blue));
-      color: #fff; border-radius: var(--radius-lg);
-      padding: 40px; text-align: center; position: relative; overflow: hidden;
-      box-shadow: var(--shadow-float);
+    /* ========== 家长关怀区 ========== */
+    .parent-care { background: var(--off-white); }
+    .care-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
     }
-    .countdown-card::after {
-      content: ""; position: absolute; top: -50px; right: -50px;
-      width: 200px; height: 200px; border-radius: 50%;
-      background: rgba(255,255,255,0.08);
+    .care-card {
+      background: #fff; border-radius: var(--radius-md);
+      padding: 28px; display: flex; gap: 18px; align-items: flex-start;
+      box-shadow: var(--shadow-soft);
     }
-    .countdown-card h3 { font-size: 1.1rem; opacity: 0.9; margin-bottom: 24px; position: relative; }
-    .countdown { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; position: relative; }
-    .cd-item {
-      background: rgba(255,255,255,0.15); backdrop-filter: blur(6px);
-      border-radius: var(--radius-md); padding: 20px 16px; min-width: 90px;
+    .care-card .care-icon {
+      flex-shrink: 0; width: 52px; height: 52px; border-radius: 16px;
+      background: var(--foam); display: grid; place-items: center; font-size: 1.6rem;
     }
-    .cd-item .val { font-size: 2.8rem; font-weight: 900; color: var(--sun-yellow); line-height: 1; }
-    .cd-item .label { font-size: 0.8rem; opacity: 0.8; margin-top: 6px; }
-
-    /* 预约主区 */
-    .booking-wrap { display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: start; }
-    @media (max-width: 900px) { .booking-wrap { grid-template-columns: 1fr; } }
-
-    .booking-form { background: #fff; border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-card); }
-    .booking-form h3 { color: var(--deep-sea); font-size: 1.4rem; margin-bottom: 24px; }
-    .form-group { margin-bottom: 22px; }
-    .form-group label { display: block; font-weight: 600; color: var(--deep-sea); margin-bottom: 8px; font-size: 0.92rem; }
-    .form-group input, .form-group select {
-      width: 100%; padding: 14px 18px; border: 2px solid var(--foam);
-      border-radius: var(--radius-sm); font-size: 0.95rem;
-      transition: border-color 0.2s; font-family: inherit;
-    }
-    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--sky-blue); }
-
-    /* 日期场次选择 */
-    .date-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-    .date-cell {
-      padding: 12px 6px; border: 2px solid var(--foam);
-      border-radius: var(--radius-sm); text-align: center; cursor: pointer;
-      transition: all 0.2s; background: #fff;
-    }
-    .date-cell:hover { border-color: var(--sky-blue); }
-    .date-cell.selected { background: var(--ocean-blue); color: #fff; border-color: var(--ocean-blue); }
-    .date-cell.disabled { opacity: 0.35; cursor: not-allowed; }
-    .date-cell .day { font-size: 0.78rem; opacity: 0.7; }
-    .date-cell .date { font-weight: 700; font-size: 1rem; margin-top: 2px; }
-
-    .slot-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .slot {
-      padding: 10px 18px; border: 2px solid var(--foam);
-      border-radius: var(--radius-pill); cursor: pointer; font-size: 0.9rem;
-      transition: all 0.2s; background: #fff;
-    }
-    .slot:hover { border-color: var(--sky-blue); }
-    .slot.selected { background: var(--coral-orange); color: #fff; border-color: var(--coral-orange); }
-    .slot .seats { font-size: 0.75rem; opacity: 0.7; margin-left: 6px; }
-    .slot.selected .seats { opacity: 0.9; }
-
-    /* 票种 */
-    .ticket-types { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .ticket-card {
-      padding: 20px; border: 2px solid var(--foam); border-radius: var(--radius-md);
-      cursor: pointer; transition: all 0.2s; background: #fff;
-    }
-    .ticket-card:hover { border-color: var(--sky-blue); }
-    .ticket-card.selected { border-color: var(--ocean-blue); background: #F0F8FF; }
-    .ticket-card .t-name { font-weight: 700; color: var(--deep-sea); }
-    .ticket-card .t-price { color: var(--coral-orange); font-weight: 800; font-size: 1.3rem; margin-top: 4px; }
-    .ticket-card .t-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
-
-    .qty-control { display: inline-flex; align-items: center; gap: 12px; }
-    .qty-control button {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--foam); color: var(--deep-sea); font-weight: 700; font-size: 1.1rem;
-    }
-    .qty-control .qty { font-weight: 700; font-size: 1.1rem; min-width: 24px; text-align: center; }
-
-    /* 订单摘要 */
-    .order-summary {
-      background: linear-gradient(180deg, #fff, #F0F8FF);
-      border-radius: var(--radius-lg); padding: 32px;
-      box-shadow: var(--shadow-card); position: sticky; top: 90px;
-    }
-    .order-summary h3 { color: var(--deep-sea); margin-bottom: 20px; }
-    .summary-row { display: flex; justify-content: space-between; padding: 10px 0; font-size: 0.92rem; }
-    .summary-row .lbl { color: var(--text-muted); }
-    .summary-row .val { font-weight: 600; color: var(--deep-sea); }
-    .summary-divider { border-top: 1px dashed var(--foam); margin: 14px 0; }
-    .summary-total { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 24px; }
-    .summary-total .lbl { font-weight: 700; color: var(--deep-sea); }
-    .summary-total .val { font-size: 2rem; font-weight: 900; color: var(--coral-orange); }
-    .remind-btn {
-      width: 100%; padding: 14px; border-radius: var(--radius-pill);
-      background: #fff; color: var(--ocean-blue); border: 2px solid var(--sky-blue);
-      font-weight: 700; margin-top: 12px; transition: all 0.2s;
-    }
-    .remind-btn:hover { background: var(--foam); }
-
-    /* 必玩亮点 */
-    .must-play { padding: 60px 0; }
-    .must-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-    .must-card {
-      background: #fff; border-radius: var(--radius-md); padding: 24px;
-      box-shadow: var(--shadow-soft); border-left: 4px solid var(--coral-orange);
-    }
-    .must-card .num { font-size: 1.8rem; font-weight: 900; color: var(--coral-orange); opacity: 0.4; }
-    .must-card h4 { color: var(--deep-sea); margin: 6px 0 8px; }
-    .must-card p { font-size: 0.88rem; color: var(--text-muted); }
+    .care-card h4 { color: var(--deep-sea); margin-bottom: 6px; }
+    .care-card p { color: var(--text-muted); font-size: 0.9rem; }
   </style>
-<style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style></head>
+<style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style><style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style><style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style><style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style><style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style><style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style><style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style><style>@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }</style></head>
 <body>
+  <!-- 导航栏 -->
   <nav class="navbar" style="box-shadow: rgba(10, 77, 104, 0.08) 0px 4px 20px;">
     <a href="index.html" class="nav-brand">
       <span class="logo-mark">
@@ -139,8 +163,8 @@
       蔚海狂欢季
     </a>
     <div class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="reservation.html" class="active">预约报名</a>
+      <a href="index.html" class="active">首页</a>
+      <a href="reservation.html">预约报名</a>
       <a href="map.html">入园导览</a>
       <a href="science.html">科普打卡</a>
       <a href="stamps.html">集章分享</a>
@@ -150,166 +174,187 @@
     <button class="menu-toggle" aria-label="菜单"><span></span><span></span><span></span></button>
   </nav>
 
-  <header class="page-hero ocean-bg">
-    <div class="ripple-layer"></div>
-    <h1>预约报名</h1>
-    <p>锁定你的海洋探索之旅，一键预约，智能提醒</p>
-  <div class="doodle bubble" style="left: 84.8623%; top: 18.5823%; animation-delay: 0.962613s; animation-duration: 6.99526s; transform: rotate(-9.56679deg); width: 23.5714px; height: 23.5714px;"></div><div class="doodle bubble" style="left: 61.5664%; top: 66.5091%; animation-delay: 1.84527s; animation-duration: 10.5011s; transform: rotate(-12.5046deg); width: 32.1823px; height: 32.1823px;"></div><div class="doodle bubble" style="left: 28.4383%; top: 41.467%; animation-delay: 0.63139s; animation-duration: 8.84242s; transform: rotate(20.6663deg); width: 48.7971px; height: 48.7971px;"></div><div class="doodle bubble" style="left: 30.6562%; top: 3.33227%; animation-delay: 1.66403s; animation-duration: 9.21907s; transform: rotate(11.4615deg); width: 49.6664px; height: 49.6664px;"></div><div class="doodle star" style="left: 41.5094%; top: 74.2285%; animation-delay: 2.97313s; animation-duration: 8.61077s; transform: rotate(0.793774deg); font-size: 19.1864px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star" style="left: 24.9544%; top: 55.5585%; animation-delay: 2.23643s; animation-duration: 10.8665s; transform: rotate(-25.4701deg); font-size: 31.9621px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star" style="left: 80.6845%; top: 75.4471%; animation-delay: 1.29643s; animation-duration: 10.4127s; transform: rotate(-15.6758deg); font-size: 28.2528px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 5.16838%; top: 43.411%; animation-delay: 0.303629s; animation-duration: 8.17646s; transform: rotate(-19.2424deg); font-size: 31.118px; color: rgb(255, 181, 197);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFB5C5" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 44.0028%; top: 65.558%; animation-delay: 1.22018s; animation-duration: 10.0695s; transform: rotate(8.43994deg); font-size: 34.3216px; color: rgb(255, 217, 61);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFD93D" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 11.0681%; top: 84.3269%; animation-delay: 1.19439s; animation-duration: 7.91598s; transform: rotate(20.7184deg); font-size: 37.9891px; color: rgb(126, 215, 193);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7ED7C1" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 28.6716%; top: 29.9523%; animation-delay: 3.28544s; animation-duration: 7.97431s; transform: rotate(-9.8844deg); font-size: 18.1208px; color: rgb(255, 217, 61);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFD93D" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle star-outline" style="left: 65.2781%; top: 18.3059%; animation-delay: 2.50719s; animation-duration: 6.67338s; transform: rotate(21.8001deg); font-size: 26.9632px; color: rgb(126, 215, 193);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7ED7C1" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 16.8 5.7 21.4 8 14 2 9.4h7.6z"></path></svg></div><div class="doodle tape blue" style="left: 79.6505%; top: 52.8474%; animation-delay: 1.43317s; animation-duration: 9.49031s; transform: rotate(-11.3107deg); width: 82.3612px; height: 21.3403px;"></div><div class="doodle tape yellow" style="left: 40.246%; top: 7.27828%; animation-delay: 1.0724s; animation-duration: 7.36259s; transform: rotate(28.9165deg); width: 91.1138px; height: 16.3853px;"></div><div class="doodle tape" style="left: 77.1618%; top: 6.93902%; animation-delay: 2.30771s; animation-duration: 7.77354s; transform: rotate(25.6958deg); width: 99.1651px; height: 25.3438px;"></div><div class="doodle dots" style="left: 33.4951%; top: 47.0535%; animation-delay: 3.6613s; animation-duration: 10.3009s; transform: rotate(-2.45536deg); width: 44.3036px; height: 44.3036px;"></div><div class="doodle dots" style="left: 61.457%; top: 54.2178%; animation-delay: 3.69054s; animation-duration: 7.07475s; transform: rotate(-29.2919deg); width: 48.4494px; height: 48.4494px;"></div><div class="doodle dots" style="left: 65.3541%; top: 72.0841%; animation-delay: 0.55244s; animation-duration: 8.30487s; transform: rotate(-3.38008deg); width: 64.9104px; height: 64.9104px;"></div><div class="doodle diamond yellow" style="left: 44.4622%; top: 40.6355%; animation-delay: 2.06768s; animation-duration: 6.96459s; transform: rotate(-24.9475deg);"></div><div class="doodle diamond yellow" style="left: 13.3485%; top: 17.3622%; animation-delay: 3.03441s; animation-duration: 5.32142s; transform: rotate(22.4975deg);"></div><div class="doodle diamond blue" style="left: 57.3306%; top: 81.0286%; animation-delay: 3.86158s; animation-duration: 6.03076s; transform: rotate(24.5414deg);"></div><div class="doodle diamond" style="left: 88.5032%; top: 6.74418%; animation-delay: 0.792253s; animation-duration: 10.1955s; transform: rotate(26.5897deg);"></div><div class="doodle wave" style="left: 24.108%; top: 33.205%; animation-delay: 3.12034s; animation-duration: 6.20916s; transform: rotate(-6.40676deg); color: rgb(255, 181, 197);"><svg width="90" height="24" viewBox="0 0 90 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M0 12 Q 15 0 30 12 T 60 12 T 90 12"></path></svg></div><div class="doodle wave" style="left: 80.1325%; top: 10.8377%; animation-delay: 3.67992s; animation-duration: 9.78279s; transform: rotate(-4.98986deg); color: rgb(46, 134, 171);"><svg width="90" height="24" viewBox="0 0 90 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M0 12 Q 15 0 30 12 T 60 12 T 90 12"></path></svg></div></header>
+  <!-- 首屏封面 -->
+  <header class="cover">
+    <img src="images/cover.jpg" alt="蔚海狂欢季 Blue-Sea Carnival 2026" class="cover-img">
+    <!-- 👇 START 按钮：CSS 在 style.css 的 .cover-start -->
+    <a href="#highlights" class="cover-start" onclick="scrollToId('highlights');return false;" aria-label="开始探索" style="align-self: flex-end;">
+      <span class="cover-start-label">START</span>
+      <span class="cover-start-arrow">↓</span>
+    </a>
+  </header>
 
-  <!-- 倒计时 -->
-  <section class="countdown-wrap">
-    <div class="container">
-      <div class="countdown-card fade-in visible">
-        <h3>⏰ 距离活动开幕还有</h3>
-        <div class="countdown" id="countdown">
-          <div class="cd-item"><div class="val" id="cd-days">18</div><div class="label">天</div></div>
-          <div class="cd-item"><div class="val" id="cd-hours">06</div><div class="label">时</div></div>
-          <div class="cd-item"><div class="val" id="cd-mins">42</div><div class="label">分</div></div>
-          <div class="cd-item"><div class="val" id="cd-secs">22</div><div class="label">秒</div></div>
+  <!-- 活动亮点 -->
+  <section id="highlights" class="section highlights">
+    <div class="container" style="">
+      <div class="section-title fade-in visible">
+        <span class="eyebrow">活动亮点</span>
+        <h2>四大核心体验 点亮夏日海洋</h2>
+        <p>融合科普、互动、游戏与社交，让每一次探索都充满惊喜</p>
+      </div>
+      <div class="highlight-grid">
+        <div class="highlight-card fade-in visible">
+          <img class="card-img" src="images/user-index-img-1.jpg" alt="沉浸式科普展区">
+          <div class="card-body">
+            <h3>沉浸式科普展区</h3>
+            <p>六大海洋主题展区，AR 互动还原深海生态，把课本知识变成可触摸的奇妙体验。</p>
+          </div>
+        </div>
+        <div class="highlight-card fade-in visible">
+          <img class="card-img" src="images/user-index-img-2.jpg" alt="趣味打卡任务">
+          <div class="card-body">
+            <h3>趣味打卡任务</h3>
+            <p>游戏化科普卡片 + 点位任务系统，边玩边学，完成任务解锁海洋小达人徽章。</p>
+          </div>
+        </div>
+        <div class="highlight-card fade-in visible">
+          <img class="card-img" src="images/user-index-img-3.jpg" alt="集章兑换周边">
+          <div class="card-body">
+            <h3>集章兑换周边</h3>
+            <p>集齐六大展区印章，兑换限定海洋主题周边，更有自动生成纪念海报可分享。</p>
+          </div>
+        </div>
+        <div class="highlight-card fade-in visible">
+          <img class="card-img" src="images/user-index-img-4.jpg" alt="智能导览路线">
+          <div class="card-body">
+            <h3>智能导览路线</h3>
+            <p>实时定位 + 智能路线推荐，避开排队高峰，让家长和孩子轻松玩遍全场。</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 预约表单 -->
-  <section class="section" style="padding-top: 20px;">
+  <!-- 用户旅程 -->
+  <section class="section journey">
     <div class="container">
-      <div class="booking-wrap">
-        <!-- 左侧表单 -->
-        <div class="booking-form fade-in">
-          <h3>🎫 填写预约信息</h3>
-          <div class="form-group">
-            <label>选择日期</label>
-            <div class="date-grid" id="dateGrid">
-              <div class="date-cell" data-date="7-15"><div class="day">周一</div><div class="date">7/15</div></div>
-              <div class="date-cell selected" data-date="7-16"><div class="day">周二</div><div class="date">7/16</div></div>
-              <div class="date-cell" data-date="7-17"><div class="day">周三</div><div class="date">7/17</div></div>
-              <div class="date-cell" data-date="7-18"><div class="day">周四</div><div class="date">7/18</div></div>
-              <div class="date-cell" data-date="7-19"><div class="day">周五</div><div class="date">7/19</div></div>
-              <div class="date-cell" data-date="7-20"><div class="day">周六</div><div class="date">7/20</div></div>
-              <div class="date-cell disabled" data-date="7-21"><div class="day">周日</div><div class="date">已满</div></div>
-            </div>
-          </div>
+      <div class="section-title fade-in visible">
+        <span class="eyebrow">用户旅程</span>
+        <h2>六步畅玩 从种草到回味</h2>
+        <p>完整覆盖活动前中后，打造无缝衔接的海洋探索体验</p>
+      </div>
+      <div class="journey-steps">
+        <a href="index.html" class="journey-step fade-in visible">
+          <div class="num">1</div>
+          <h4>预热种草</h4>
+          <p>被海洋主题吸引</p>
+          <div class="dot"></div>
+        </a>
+        <a href="reservation.html" class="journey-step fade-in visible">
+          <div class="num">2</div>
+          <h4>预约报名</h4>
+          <p>一键锁定场次</p>
+          <div class="dot"></div>
+        </a>
+        <a href="map.html" class="journey-step fade-in visible">
+          <div class="num">3</div>
+          <h4>入园导览</h4>
+          <p>智能路线导航</p>
+          <div class="dot"></div>
+        </a>
+        <a href="science.html" class="journey-step fade-in visible">
+          <div class="num">4</div>
+          <h4>科普打卡</h4>
+          <p>边玩边学知识</p>
+          <div class="dot"></div>
+        </a>
+        <a href="stamps.html" class="journey-step fade-in visible">
+          <div class="num">5</div>
+          <h4>集章分享</h4>
+          <p>兑换限定奖励</p>
+          <div class="dot"></div>
+        </a>
+        <a href="profile.html" class="journey-step fade-in visible">
+          <div class="num">6</div>
+          <h4>回味沉淀</h4>
+          <p>成长档案回顾</p>
+          <div class="dot"></div>
+        </a>
+      </div>
+    </div>
+  </section>
 
-          <div class="form-group">
-            <label>选择场次</label>
-            <div class="slot-row">
-              <div class="slot selected">上午场 09:00-12:30 <span class="seats">余 86 席</span></div>
-              <div class="slot">下午场 13:30-17:00 <span class="seats">余 42 席</span></div>
-              <div class="slot">夜场 18:00-21:30 <span class="seats">余 120 席</span></div>
-            </div>
-          </div>
+  <!-- 数据统计 -->
+  <section class="container">
+    <div class="stats fade-in visible">
+      <!-- 👇 替换 stats 背景图：改这里的 src 就行 -->
+      <img class="stats-bg" src="images/stats-bg.jpg" alt="" aria-hidden="true">
+      <div class="stat-item">
+        <div class="num">6+</div>
+        <div class="label">主题展区</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">20+</div>
+        <div class="label">互动打卡点</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">100+</div>
+        <div class="label">海洋科普知识点</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">5000+</div>
+        <div class="label">家庭已预约</div>
+      </div>
+    </div>
+  </section>
 
-          <div class="form-group">
-            <label>票种选择</label>
-            <div class="ticket-types">
-              <div class="ticket-card selected" data-price="168">
-                <div class="t-name">亲子套票</div>
-                <div class="t-price">¥168</div>
-                <div class="t-desc">1大1小 · 含集章手册</div>
-              </div>
-              <div class="ticket-card" data-price="268">
-                <div class="t-name">家庭套票</div>
-                <div class="t-price">¥268</div>
-                <div class="t-desc">2大1小 · 含限量周边</div>
-              </div>
-              <div class="ticket-card" data-price="98">
-                <div class="t-name">青少年票</div>
-                <div class="t-price">¥98</div>
-                <div class="t-desc">单人 · 10-18岁适用</div>
-              </div>
-              <div class="ticket-card" data-price="128">
-                <div class="t-name">成人票</div>
-                <div class="t-price">¥128</div>
-                <div class="t-desc">单人 · 陪同家长</div>
-              </div>
-            </div>
+  <!-- 家长关怀 -->
+  <section class="section parent-care">
+    <div class="container">
+      <div class="section-title fade-in visible">
+        <span class="eyebrow">家长关怀</span>
+        <h2>放心陪伴 安心探索</h2>
+        <p>我们兼顾青少年趣味与家长关心的安全、科普、信息需求</p>
+      </div>
+      <div class="care-grid">
+        <div class="care-card fade-in visible">
+          <div class="care-icon">🛡️</div>
+          <div>
+            <h4>全程安全保障</h4>
+            <p>园区多重安保、儿童防走失手环、紧急医疗点全覆盖，家长更安心。</p>
           </div>
-
-          <div class="form-group">
-            <label>购票数量</label>
-            <div class="qty-control">
-              <button onclick="changeQty(-1)">−</button>
-              <span class="qty" id="qty">2</span>
-              <button onclick="changeQty(1)">+</button>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>联系人姓名</label>
-            <input type="text" placeholder="请输入家长姓名" value="李女士">
-          </div>
-          <div class="form-group">
-            <label>联系电话</label>
-            <input type="tel" placeholder="请输入手机号" value="138****8888">
-          </div>
-
-          <button class="btn btn-primary btn-lg" style="width:100%; justify-content:center;" onclick="toast('预约成功！已为您锁定 7月16日 上午场，提醒已设置', 'success')">
-            确认预约 · 立即支付
-          </button>
         </div>
-
-        <!-- 右侧订单摘要 -->
-        <div class="order-summary fade-in">
-          <h3>📋 订单摘要</h3>
-          <div class="summary-row"><span class="lbl">活动日期</span><span class="val">7月16日 周二</span></div>
-          <div class="summary-row"><span class="lbl">活动场次</span><span class="val">上午场 09:00</span></div>
-          <div class="summary-row"><span class="lbl">票种</span><span class="val">亲子套票</span></div>
-          <div class="summary-row"><span class="lbl">数量</span><span class="val">× 2</span></div>
-          <div class="summary-divider"></div>
-          <div class="summary-row"><span class="lbl">早鸟优惠</span><span class="val" style="color:var(--mint-green)">− ¥30</span></div>
-          <div class="summary-total">
-            <span class="lbl">应付总额</span>
-            <span class="val" id="totalPrice">¥306</span>
+        <div class="care-card fade-in visible">
+          <div class="care-icon">📚</div>
+          <div>
+            <h4>权威科普内容</h4>
+            <p>联合海洋研究所专家审核内容，确保知识点准确、适龄、有深度。</p>
           </div>
-          <button class="remind-btn" onclick="toast('已设置开场前 24 小时提醒 🔔')">
-            🔔 设置开场提醒
-          </button>
-          <p style="font-size:0.78rem; color:var(--text-muted); text-align:center; margin-top:14px;">
-            支持随时退改 · 开场前 24h 自动提醒
-          </p>
+        </div>
+        <div class="care-card fade-in visible">
+          <div class="care-icon">📍</div>
+          <div>
+            <h4>实时场次信息</h4>
+            <p>演出、互动场次实时更新，智能路线推荐避开人流，少走弯路。</p>
+          </div>
+        </div>
+        <div class="care-card fade-in visible">
+          <div class="care-icon">📱</div>
+          <div>
+            <h4>亲子协作模式</h4>
+            <p>家长可远程查看孩子打卡进度，共同完成亲子任务，增进互动。</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 必玩亮点 -->
-  <section class="must-play">
-    <div class="container">
-      <div class="section-title fade-in">
-        <span class="eyebrow">必玩亮点</span>
-        <h2>本场活动 5 大必体验</h2>
-      </div>
-      <div class="must-grid">
-        <div class="must-card fade-in">
-          <div class="num">01</div>
-          <h4>深海 AR 探险</h4>
-          <p>戴上 AR 眼镜潜入 3000 米深海，与鲸鲨共游。</p>
-        </div>
-        <div class="must-card fade-in">
-          <div class="num">02</div>
-          <h4>海洋生物课堂</h4>
-          <p>研究员带队，近距离观察活体海洋生物。</p>
-        </div>
-        <div class="must-card fade-in">
-          <div class="num">03</div>
-          <h4>泡泡音乐派对</h4>
-          <p>午后泡泡池狂欢，海洋主题 live 演出。</p>
-        </div>
-        <div class="must-card fade-in">
-          <div class="num">04</div>
-          <h4>集章兑换周边</h4>
-          <p>集满 6 章兑换限定海洋盲盒。</p>
-        </div>
-        <div class="must-card fade-in">
-          <div class="num">05</div>
-          <h4>纪念海报生成</h4>
-          <p>自动生成专属打卡海报，社交一键分享。</p>
-        </div>
+  <!-- 行动召唤 -->
+  <section class="cta-section">
+    <div class="container" style="text-align:center;">
+      <div class="fade-in visible">
+        <h2 style="font-size: clamp(1.6rem, 3.5vw, 2.4rem); color: var(--deep-sea); margin-bottom: 16px;">
+          这个夏天，和孩子一起潜入蔚蓝大海 🌊
+        </h2>
+        <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 32px;">
+          限时早鸟票开放中，完成预约即可获得集章手册一份
+        </p>
+        <a href="reservation.html" class="btn btn-primary btn-lg">立即预约报名 →</a>
       </div>
     </div>
   </section>
 
+  <!-- 页脚 -->
   <footer class="footer">
     <div class="container" style="position: relative; z-index: 1;">
       <div class="footer-inner">
@@ -342,62 +387,19 @@
     </div>
   </footer>
 
-  <button class="back-to-top" aria-label="回到顶部">
+  <button class="back-to-top show" aria-label="回到顶部">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
   </button>
 
-  <script>
-    window.PAGE_ID = 'reservation';
-    // 倒计时
-    let total = 18*86400 + 6*3600 + 42*60 + 30;
-    setInterval(() => {
-      total--; if (total < 0) total = 0;
-      const d = Math.floor(total/86400), h = Math.floor(total%86400/3600),
-            m = Math.floor(total%3600/60), s = total%60;
-      const pad = n => String(n).padStart(2,'0');
-      document.getElementById('cd-days').textContent = pad(d);
-      document.getElementById('cd-hours').textContent = pad(h);
-      document.getElementById('cd-mins').textContent = pad(m);
-      document.getElementById('cd-secs').textContent = pad(s);
-    }, 1000);
-
-    // 日期选择
-    document.querySelectorAll('.date-cell:not(.disabled)').forEach(cell => {
-      cell.addEventListener('click', () => {
-        document.querySelectorAll('.date-cell').forEach(c => c.classList.remove('selected'));
-        cell.classList.add('selected');
-      });
-    });
-    // 场次
-    document.querySelectorAll('.slot').forEach(s => {
-      s.addEventListener('click', () => {
-        document.querySelectorAll('.slot').forEach(x => x.classList.remove('selected'));
-        s.classList.add('selected');
-      });
-    });
-    // 票种
-    document.querySelectorAll('.ticket-card').forEach(t => {
-      t.addEventListener('click', () => {
-        document.querySelectorAll('.ticket-card').forEach(x => x.classList.remove('selected'));
-        t.classList.add('selected');
-        updateTotal();
-      });
-    });
-    // 数量
-    let qty = 2;
-    function changeQty(n) {
-      qty = Math.max(1, Math.min(10, qty + n));
-      document.getElementById('qty').textContent = qty;
-      updateTotal();
-    }
-    window.changeQty = changeQty;
-    function updateTotal() {
-      const price = +document.querySelector('.ticket-card.selected').dataset.price;
-      const total = price * qty - 30;
-      document.getElementById('totalPrice').textContent = '¥' + total;
-    }
-  </script>
+  <script>window.PAGE_ID = 'home';</script>
   <script src="js/main.js"></script>
+
+
+
+
+
+
+
 
 
 </body></html>
