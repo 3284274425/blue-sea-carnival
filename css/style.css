@@ -129,17 +129,13 @@ h1, h2, h3, h4, h5, h6,
 /* ---------- 海洋波光背景纹理（明亮水彩晕染） ---------- */
 .ocean-bg {
   position: relative;
-  background: linear-gradient(150deg, #FFFDF8 0%, #F5FBFF 25%, #EAF6FD 50%, #F0F8FD 75%, #FFFDF8 100%);
+  background: url('images/banner-bg.jpg') center/cover no-repeat;
   overflow: hidden;
 }
 .ocean-bg::before {
   content: "";
   position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 15% 20%, rgba(255,203,164,0.35) 0%, transparent 35%),
-    radial-gradient(ellipse at 85% 25%, rgba(255,181,197,0.3) 0%, transparent 38%),
-    radial-gradient(ellipse at 75% 75%, rgba(141,224,200,0.28) 0%, transparent 40%),
-    radial-gradient(ellipse at 25% 80%, rgba(157,213,239,0.35) 0%, transparent 45%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.4) 100%);
   pointer-events: none;
 }
 
