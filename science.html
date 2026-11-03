@@ -76,7 +76,11 @@
     .card-badge { font-size: 0.78rem; color: var(--text-muted); }
 
     /* AR 互动入口 */
-    .ar-section { padding: 60px 0; background: linear-gradient(135deg, var(--deep-sea), var(--ocean-blue)); color: #fff; }
+    .ar-section {
+      padding: 60px 0; color: #fff;
+      background: linear-gradient(rgba(10, 77, 104, 0.7), rgba(10, 77, 104, 0.7)),
+                  url('images/ar-bg.jpg') center/cover no-repeat;
+    }
     .ar-section .section-title h2 { color: #fff; }
     .ar-section .section-title p { color: rgba(255,255,255,0.8); }
     .ar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
