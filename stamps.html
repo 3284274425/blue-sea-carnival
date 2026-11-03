@@ -92,10 +92,34 @@
       background: #fff; border-radius: var(--radius-lg); padding: 20px;
       box-shadow: var(--shadow-card);
     }
-    .poster-main-img {
-      width: 100%; aspect-ratio: 3/4; object-fit: cover;
-      border-radius: var(--radius-md); display: block;
+    .poster-canvas {
+      aspect-ratio: 3/4; border-radius: var(--radius-md); overflow: hidden;
+      background-size: cover; background-position: center;
+      position: relative; display: flex; flex-direction: column;
+      padding: 28px; color: #1a4060;
     }
+    .poster-canvas::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.75) 100%);
+      z-index: 0;
+    }
+    .poster-canvas > * { position: relative; z-index: 1; }
+    .poster-canvas .p-head { display: flex; justify-content: space-between; align-items: flex-start; }
+    .poster-canvas .p-badge {
+      background: var(--coral-orange); padding: 4px 12px; border-radius: 20px;
+      font-size: 0.7rem; font-weight: 700; color: #fff;
+    }
+    .poster-canvas .p-title { margin-top: auto; }
+    .poster-canvas .p-title h2 { font-size: 1.8rem; line-height: 1.1; color: var(--deep-sea); }
+    .poster-canvas .p-title .sub { font-size: 0.85rem; opacity: 0.7; margin-top: 6px; color: var(--text-muted); }
+    .poster-canvas .p-stats {
+      display: flex; gap: 16px; margin-top: 20px;
+      padding-top: 16px; border-top: 1px solid rgba(26,64,96,0.15);
+    }
+    .poster-canvas .p-stats div { flex: 1; }
+    .poster-canvas .p-stats .v { font-size: 1.2rem; font-weight: 900; color: var(--coral-orange); }
+    .poster-canvas .p-stats .l { font-size: 0.7rem; opacity: 0.6; color: var(--text-muted); }
+    .poster-canvas .p-foot { text-align: center; margin-top: 14px; font-size: 0.7rem; opacity: 0.5; color: var(--text-muted); }
     .poster-controls h3 { color: var(--deep-sea); margin-bottom: 20px; font-size: 1.3rem; }
     .poster-style {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
@@ -241,7 +265,22 @@
       </div>
       <div class="poster-layout fade-in">
         <div class="poster-preview">
-          <img id="poster-main" class="poster-main-img" src="images/poster-1.jpg" alt="纪念海报" loading="lazy">
+          <div class="poster-canvas" id="poster-canvas" style="background-image:url('images/poster-1.jpg');">
+            <div class="p-head">
+              <span class="p-badge">🌊 蔚海狂欢季</span>
+              <span style="font-size:1.5rem;">🐠</span>
+            </div>
+            <div class="p-title">
+              <h2>李同学的<br>海洋探索之旅</h2>
+              <p class="sub">2026.07.16 · 亲子畅玩路线</p>
+            </div>
+            <div class="p-stats">
+              <div><div class="v">3/6</div><div class="l">打卡展区</div></div>
+              <div><div class="v">30</div><div class="l">知识币</div></div>
+              <div><div class="v">2h</div><div class="l">游玩时长</div></div>
+            </div>
+            <div class="p-foot">Blue-Sea Carnival · 让海洋科普触手可及</div>
+          </div>
         </div>
         <div class="poster-controls">
           <h3>🎨 选择海报风格</h3>
@@ -323,7 +362,7 @@
     function selectStyle(el, imgSrc) {
       document.querySelectorAll('.style-thumb').forEach(s => s.classList.remove('active'));
       el.classList.add('active');
-      if (imgSrc) document.getElementById('poster-main').src = imgSrc;
+      if (imgSrc) document.getElementById('poster-canvas').style.backgroundImage = "url('" + imgSrc + "')";
     }
     window.selectStyle = selectStyle;
   </script>
