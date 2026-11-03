@@ -43,7 +43,10 @@
       animation: stampPop 0.5s ease;
     }
     @keyframes stampPop { from { transform: scale(0); } to { transform: scale(1); } }
-    .stamp-cell .s-icon { font-size: 1.8rem; }
+    .stamp-cell .s-icon { font-size: 1.8rem; width: 100%; height: 100%; display: grid; place-items: center; }
+    .stamp-cell .s-icon img {
+      width: 65%; height: 65%; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    }
     .stamp-cell .s-name { font-size: 0.7rem; margin-top: 2px; opacity: 0.85; }
     .stamp-cell.empty { color: var(--text-muted); }
     .stamp-cell.empty .s-icon { opacity: 0.3; font-size: 1.5rem; }
@@ -184,15 +187,15 @@
         </div>
         <div class="stamp-grid">
           <div class="stamp-cell collected">
-            <div class="s-icon">🌊</div>
+            <div class="s-icon"><img src="images/stamp-1.jpg" alt="深海" loading="lazy"></div>
             <div class="s-name">深海</div>
           </div>
           <div class="stamp-cell collected">
-            <div class="s-icon">🐠</div>
+            <div class="s-icon"><img src="images/stamp-2.jpg" alt="珊瑚" loading="lazy"></div>
             <div class="s-name">珊瑚</div>
           </div>
           <div class="stamp-cell collected">
-            <div class="s-icon">🐧</div>
+            <div class="s-icon"><img src="images/stamp-3.jpg" alt="极地" loading="lazy"></div>
             <div class="s-name">极地</div>
           </div>
           <div class="stamp-cell empty">
