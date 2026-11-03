@@ -68,7 +68,10 @@
     .reward-card .reward-img {
       width: 100px; height: 100px; margin: 0 auto 16px; border-radius: 20px;
       background: linear-gradient(135deg, var(--foam), var(--ice-blue));
-      display: grid; place-items: center; font-size: 3rem;
+      display: grid; place-items: center; overflow: hidden;
+    }
+    .reward-card .reward-img img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 20px;
     }
     .reward-card h4 { color: var(--deep-sea); margin-bottom: 4px; }
     .reward-card .cost { color: var(--coral-orange); font-weight: 800; margin: 8px 0; }
@@ -222,25 +225,25 @@
       </div>
       <div class="reward-grid">
         <div class="reward-card fade-in">
-          <div class="reward-img">🐳</div>
+          <div class="reward-img"><img src="images/souvenir-1.jpg" alt="鲸鲨毛绒公仔" loading="lazy"></div>
           <h4>鲸鲨毛绒公仔</h4>
           <div class="cost">6 章 <span class="need">· 50 币</span></div>
           <button class="reward-btn disabled" onclick="toast('印章不足，还差 3 枚')">印章不足</button>
         </div>
         <div class="reward-card fade-in">
-          <div class="reward-img">📔</div>
+          <div class="reward-img"><img src="images/souvenir-2.jpg" alt="海洋科普手账" loading="lazy"></div>
           <h4>海洋科普手账</h4>
           <div class="cost">3 章 <span class="need">· 20 币</span></div>
           <button class="reward-btn" onclick="toast('兑换成功！请前往 F 区集章中心领取', 'success')">立即兑换</button>
         </div>
         <div class="reward-card fade-in">
-          <div class="reward-img">🎨</div>
+          <div class="reward-img"><img src="images/souvenir-3.jpg" alt="海洋涂鸦套装" loading="lazy"></div>
           <h4>海洋涂鸦套装</h4>
           <div class="cost">4 章 <span class="need">· 30 币</span></div>
           <button class="reward-btn disabled" onclick="toast('印章不足，还差 1 枚')">印章不足</button>
         </div>
         <div class="reward-card fade-in">
-          <div class="reward-img">🧢</div>
+          <div class="reward-img"><img src="images/souvenir-4.jpg" alt="限定海洋棒球帽" loading="lazy"></div>
           <h4>限定海洋棒球帽</h4>
           <div class="cost">5 章 <span class="need">· 40 币</span></div>
           <button class="reward-btn disabled" onclick="toast('印章不足，还差 2 枚')">印章不足</button>
